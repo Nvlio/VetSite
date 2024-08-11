@@ -3,7 +3,7 @@ export default async function GET(url: string) {
     console.log(url)
 
     let respfinal: Promise<any>
-    respfinal = fetch(url, { method: 'GET', headers: { 'content-type': "application/json" } })
+    respfinal = fetch(url, { method: 'GET', headers: { 'ngrok-skip-browser-warning': 'true' } })
         .then((resposta) => { return resposta.json() })
         .then((resp) => {
             console.log(resp)
