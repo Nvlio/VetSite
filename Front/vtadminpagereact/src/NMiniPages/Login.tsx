@@ -61,8 +61,15 @@ export default function FormuloginMini() {
     const EnviarData = async () => {
         alert("oi")
         try{
-            fetch("https://2ceb-189-124-0-88.ngrok-free.app/Comentarios",{method:"GET"})
+            const x = await fetch("https://ddb3-189-124-0-88.ngrok-free.app/Comentarios",{method:"GET",headers: {'ngrok-skip-browser-warning': 'true'}})
+            .then((resp)=>{return resp.json()})
+            .then((resposta)=>{
+                console.log(resposta)
+                return resposta
+            })
+            alert("x")
         }catch(e){
+            console.log(e)
             alert(e)
         }
         
