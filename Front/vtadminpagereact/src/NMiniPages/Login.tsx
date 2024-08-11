@@ -59,13 +59,15 @@ export default function FormuloginMini() {
 
     //função que envia os dados do formulario para o servidor
     const EnviarData = async () => {
-        setTestE(url)
         if (data.email !== "" && data.senha !== "") {
             const resposta = await ValidarDados({ key: 'Fim' })
             if (!resposta) {
                 return
             } else {
-                await Login(url, data, user)
+                alert("fui")
+                const val:any = await Login(url, data, user)
+                console.log(val)
+                setTestE(val)
             }
         } else {
             setData((prevState) => ({ ...prevState, erro: "Há campos que não foram completos" }))
