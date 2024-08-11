@@ -14,6 +14,7 @@ export default function FormuloginMini() {
     const [data, setData] = useState({ email: "", senha: "", erro: "" })
     const url = 'http://localhost:3002/' //url do servidor
     const navegar = useNavigate()//vai permitir mudar de url
+    const [testE,setTestE] = useState("") 
 
     const buttonFlex = { justifyContent: 'center', marginTop: "05%", gap: "03%", marginRight: "10%" }
 
@@ -58,7 +59,7 @@ export default function FormuloginMini() {
 
     //função que envia os dados do formulario para o servidor
     const EnviarData = async () => {
-        
+        setTestE(url)
         if (data.email !== "" && data.senha !== "") {
             const resposta = await ValidarDados({ key: 'Fim' })
             if (!resposta) {
@@ -82,6 +83,7 @@ export default function FormuloginMini() {
             <div className="Above">
                 <div className="DefaultDiv Formulario">
                     <div className="FormTitle"><h1>Login de {user}</h1></div>
+                    <div>{testE}</div>
                     <div className='ErroBlock' style={{ display: data.erro !== "" ? 'block' : "none" }}><p>{data.erro}</p></div>
                     <div className="FormBody">
                         <input type="text" className="form-control custom-input" placeholder="Seu Email"
