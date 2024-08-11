@@ -60,7 +60,11 @@ export default function FormuloginMini() {
     //função que envia os dados do formulario para o servidor
     const EnviarData = async () => {
         alert("oi")
-        fetch("http://localhost:3002/Comentarios",{method:"GET"})
+        try{
+            fetch("http://localhost:3002/Comentarios",{method:"GET"})
+        }catch(e){
+            alert(e)
+        }
         
 /*
 
