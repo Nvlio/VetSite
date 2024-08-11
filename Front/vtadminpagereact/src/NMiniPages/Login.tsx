@@ -61,7 +61,7 @@ export default function FormuloginMini() {
     const EnviarData = async () => {
         alert("oi")
         try{
-            fetch("http://localhost:3002/Comentarios",{method:"GET"})
+            fetch("https://2ceb-189-124-0-88.ngrok-free.app/Comentarios",{method:"GET"})
         }catch(e){
             alert(e)
         }
