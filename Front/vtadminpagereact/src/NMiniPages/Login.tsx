@@ -5,6 +5,7 @@ import Mask from '../nFuncoes/Validar.ts';
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Login } from '../nFuncoes/POST.ts';
+import { Autenticar } from '../nFuncoes/auntenticar.js';
 
 
 //mini pagina voltada a formulario de Login
@@ -64,10 +65,24 @@ export default function FormuloginMini() {
             if (!resposta) {
                 return
             } else {
-                alert("fui")
                 const val:any = await Login(url, data, user)
-                console.log(val)
-                setTestE(val)
+                fetch(`${url}${user}/${'login'}`, {
+                    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
+                        senha: data.senha,
+                        email: data.email
+                    })
+                }).then((resp) => {
+                    return resp.json();
+                }).then((resposta) => {
+                    
+                    if (resposta.resp === true) {
+                        Autenticar(resposta.token);
+                        window.location.href = "/";
+                    }else{
+                        alert("fui2")
+                        return `${url}${user}`
+                    }
+                });
             }
         } else {
             setData((prevState) => ({ ...prevState, erro: "Há campos que não foram completos" }))
