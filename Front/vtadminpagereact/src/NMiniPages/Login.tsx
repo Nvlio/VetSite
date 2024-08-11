@@ -5,7 +5,7 @@ import Mask from '../nFuncoes/Validar.ts';
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Login } from '../nFuncoes/POST.ts';
-import { Autenticar } from '../nFuncoes/auntenticar.js';
+import login from '../nFuncoes/testando.ts';
 
 
 //mini pagina voltada a formulario de Login
@@ -15,7 +15,6 @@ export default function FormuloginMini() {
     const [data, setData] = useState({ email: "", senha: "", erro: "" })
     const url = 'http://localhost:3002/' //url do servidor
     const navegar = useNavigate()//vai permitir mudar de url
-    const [testE,setTestE] = useState("") 
 
     const buttonFlex = { justifyContent: 'center', marginTop: "05%", gap: "03%", marginRight: "10%" }
 
@@ -60,35 +59,23 @@ export default function FormuloginMini() {
 
     //função que envia os dados do formulario para o servidor
     const EnviarData = async () => {
-        if (data.email !== "" && data.senha !== "") {
+        await login("ola")
+        
+/*
+
+if (data.email !== "" && data.senha !== "") {
             const resposta = await ValidarDados({ key: 'Fim' })
             if (!resposta) {
                 return
             } else {
-                const val:any = await Login(url, data, user)
-                fetch(`${url}${user}/${'login'}`, {
-                    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
-                        senha: data.senha,
-                        email: data.email
-                    })
-                }).then((resp) => {
-                    return resp.json();
-                }).then((resposta) => {
-                    
-                    if (resposta.resp === true) {
-                        Autenticar(resposta.token);
-                        window.location.href = "/";
-                    }else{
-                        alert("fui2")
-                        return `${url}${user}`
-                    }
-                });
+                await Login(url, data, user)
             }
         } else {
             setData((prevState) => ({ ...prevState, erro: "Há campos que não foram completos" }))
             return
         }
 
+*/
 
 
 
@@ -100,7 +87,6 @@ export default function FormuloginMini() {
             <div className="Above">
                 <div className="DefaultDiv Formulario">
                     <div className="FormTitle"><h1>Login de {user}</h1></div>
-                    <div>{testE}</div>
                     <div className='ErroBlock' style={{ display: data.erro !== "" ? 'block' : "none" }}><p>{data.erro}</p></div>
                     <div className="FormBody">
                         <input type="text" className="form-control custom-input" placeholder="Seu Email"
