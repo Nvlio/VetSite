@@ -1,0 +1,626 @@
+li{
+    list-style-type: none;
+}
+
+select.Form{
+    width: 70%;
+}
+
+
+
+/*1 estilos para padronizar elementos*/
+.button {
+    padding: -100px 100px 0px 0px;
+
+}
+
+.Button {
+    font-size: 30px;
+    font-family: 'Courier New', Courier, monospace;
+    margin-left: 80%;
+    cursor: pointer;
+}
+
+select.form{
+    width: 70% !important;
+    height: 40px;
+    margin-left: 15%;
+    margin-top: 5%;
+}
+
+p.form{
+    font-size: 13px;
+    padding-top: 10px;
+}
+
+.Link {
+    text-decoration: none;
+}
+
+hr#separador {
+    color: white;
+    margin: 0% 10% 02% 10%
+}
+
+/*2 Menus (navmenu)*/
+
+
+.Menu {
+    /* cima|direita|baixo|esquerda */
+    padding: 0.8% 0% 0% 0%;
+    position: fixed;
+    width: 100%;
+    z-index: 2;
+    opacity: 100%;
+}
+
+/*Fundo preto de navmenu*/
+.MenuFK {
+    background-color: black;
+    z-index: 2;
+    position: fixed;
+    opacity: 50%;
+    height: 75px;
+    width: 100%;
+}
+
+.Menu * {
+    color: white;
+    margin-right: auto;
+}
+
+.MenuL {
+    background-color: black !important;
+    width: 40% !important;
+    color: white;
+    text-decoration: none;
+    text-align: end;
+    position: fixed;
+}
+
+/*#navMenu MenuL {}*/
+
+
+/*3 Estilo para partes elementos com funções especificas*/
+.Title {
+    font-family: fantasy;
+    color: white;
+
+}
+
+.Formulario input{
+        margin: 0% 10%;
+}
+
+.Text {
+    width: 60%;
+    text-align: justify;
+    float: left;
+    margin-left: 2%;
+    font-size: 100%;
+    color: white;
+}
+
+/**/
+.Text a {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
+}
+
+/**/
+.Container {
+    display: flex;
+    margin-top: 100px;
+    justify-content: center;
+}
+
+.Container a {
+    width: 20%;
+}
+
+.Footer {
+    position: relative;
+    z-index: 1;
+}
+
+.BlackBG {
+    background-color: rgba(0, 0, 0, 0.577);
+    height: 120vh;
+    width: 100vw;
+    z-index: 1;
+    position: fixed;
+}
+
+.ImgBG {
+    background-repeat: no-repeat;
+    position: relative;
+    background-size: cover;
+    margin-top: -0%;
+    height: 130.5vh;
+    width: 100%;
+    z-index: 0;
+}
+
+.Tabela {
+    position: absolute;
+    z-index: 1;
+    margin-top: 10%;
+    margin-left: 10%;
+    width: 80%;
+    height: 70%;
+    background-color: #000000b1;
+    border-radius: 1%;
+    display: flex;
+    flex-direction: column;
+}
+
+.Tabs {
+    position: absolute;
+    z-index: 1;
+    margin-top: 05%;
+    margin-left: 10%;
+    width: 10%;
+    height: 85%;
+    background-color: #000000b1;
+    border-radius: 1%;
+    display: flex;
+    flex-direction: column;
+}
+
+.Tela{
+    text-align: left;
+    z-index:1;
+    position:relative;
+}
+
+.vertical{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2%;
+    list-style-type: none;
+    color: white;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ;
+}
+
+.vertical div{
+    width:40%;
+    flex-grow:1;
+    margin: 2% 0%;
+}
+
+@media (max-width:1110px){
+
+    
+    .vertical div{
+        width:100%;
+    }
+}
+
+.vertical div div{
+    margin-left: 10px;
+    margin-top: -01px;
+}
+
+.vertical div div div{
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.vertical div a{
+    color: white;
+    text-decoration: none;
+}
+
+.vertical div a:hover{
+    color: rgb(255, 0, 0);
+    text-decoration: none;
+}
+
+.vertical li{
+    cursor: pointer;
+}
+
+.perfilImg{
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    border: 4px solid rgba(128, 128, 128, 0.608);
+}
+
+.showlist{
+    border-right:1px solid orange;
+    border-bottom: 0px;
+}
+
+@media(max-width:1110px){
+    .showlist{
+        border-right:0px solid orange;
+        border-bottom:1px solid orange;
+    }
+}
+
+#comment li{
+    padding: 01%;
+}
+
+
+
+
+
+/*estilo quando for celular*/
+@media (max-width:848px) {
+    .Text {
+        width: 90%;
+        text-align: justify;
+        float: none;
+        margin-left: 2%;
+        color: white;
+    }
+
+    .Container {
+        display: flex;
+        flex-direction: column;
+        margin-top: 100px;
+        justify-content: center;
+    }
+
+    .Container a {
+        width: 100%;
+    }
+
+    .ImgBGCell {
+        background-repeat: no-repeat;
+        position: relative;
+        background-size: cover;
+        margin-top: -0%;
+        height: 170vh;
+        width: 100%;
+        z-index: 0;
+    }
+
+    .Tabela {
+        position: absolute;
+        z-index: 1;
+        margin-top: 30%;
+        margin-left: 10%;
+        width: 80%;
+        height: 70%;
+        background-color: #000000b1;
+        border-radius: 1%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .Tabs {
+        position: absolute;
+        z-index: 1;
+        margin-top: 10%;
+        margin-left: 10%;
+        width: 80%;
+        height: 131%;
+        background-color: #000000b1;
+        border-radius: 1%;
+        display: flex;
+        flex-direction: column;
+    }
+
+}
+
+/*Caso seja de outro tamanho*/
+@media (max-width:1508px) and (min-width:849px) {
+    .Text {
+        width: 90%;
+        text-align: justify;
+        float: none;
+        margin-left: 2%;
+        color: white;
+    }
+
+    .Container {
+        display: flex;
+        flex-direction: column;
+        margin-top: 100px;
+        justify-content: center;
+    }
+
+    .Container a {
+        width: 100%;
+    }
+
+    .ImgBGCell {
+        background-repeat: no-repeat;
+        position: relative;
+        background-size: cover;
+        margin-top: -0%;
+        height: 100vh;
+        width: 100%;
+        z-index: 0;
+    }
+
+    .Tabs {
+        position: absolute;
+        z-index: 1;
+        margin-top: 10%;
+        margin-left: 10%;
+        width: 80%;
+        height: 82%;
+        background-color: #000000b1;
+        border-radius: 1%;
+        display: flex;
+        flex-direction: column;
+    }
+
+}
+
+/*4 elementos que deffinem propriedades unicas*/
+.Preto {
+    color: "black" !important;
+}
+
+.DefaultDiv{
+    margin-top: 15%;
+    background-color: rgba(255, 255, 255, 0.871);
+    display: flex;
+    margin-left: 22%;
+    margin-bottom: 2%;
+    border: 1px solid black;
+    border-radius: 01%;
+    padding: 0% 0% 2% 0%;
+    flex-direction: column;
+    width: 60%;
+}
+
+.FormTitle{
+    background-color: black;
+    color: white ;
+    border-bottom:1px solid white
+}
+
+.FormBody{
+    margin-left: 10%; 
+    width: 70%; 
+    margin-top: 10px;
+    display: flex
+}
+
+.ErroInput{
+    border: 1px solid red;
+    color: red;
+}
+
+.ErroBlock{
+    border: 1px solid red;
+    background-color: rgba(255, 0, 0, 0.49);
+    color: rgb(255, 255, 255);
+    text-align: center;
+    padding-top: 10px;
+}
+
+.Above{
+    position: absolute;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    z-index: 1;
+
+}
+
+.Black {
+    background-color: black !important;
+    color: white;
+    cursor: pointer;
+    margin-left: 100%;
+}
+
+#Laranja {
+    color: rgba(251, 199, 104, 0.978) !important;
+}
+
+#clicavel{
+    cursor: pointer;
+}
+
+#central{
+    background-color: #000;
+    position: absolute;
+}
+
+.Flex {
+    display: flex;
+    flex-direction: row;
+}
+
+/*Estilos para computador*/
+
+
+/*Estilos para celular*/
+
+/*CSS para arrumar a do bootstrap de navmenu lateral*/
+.offcanvas-menu {
+    background-color: white;
+    margin-left: 69%;
+    width: 31%;
+    height: 100%;
+    padding: 0% 0% 0% 0%;
+    position: fixed;
+    z-index: 3;
+}
+
+#cellphone {
+    margin-left: 12% !important;
+}
+
+.offcanvas-menu ul {
+    list-style: none !important;
+    /* Remove as bolinhas da lista */
+    padding: 0 !important;
+    /* Remove o padding padrão */
+    margin: 0 !important;
+    /* Remove a margem padrão */
+    display: flex !important;
+    flex-direction: column !important;
+    /* Exibe os itens na vertical */
+    margin: 100px;
+}
+
+.offcanvas-menu ul li {
+    border: 1px solid rgb(212, 209, 209);
+    background-color: rgb(255, 255, 255);
+    text-align: start;
+    padding-right: 20%;
+    margin-left: 160%;
+    width: 260% !important;
+    /* Faz os itens ocuparem a largura total */
+}
+
+.offcanvas-menu ul li:hover {
+    border: 1px solid rgb(0, 0, 0);
+    background-color: rgb(190, 190, 190);
+}
+
+.offcanvas-menu ul li ul {
+    margin-left: 45% !important;
+    width: 05%;
+}
+
+#login {
+    border: 1px solid rgb(255, 255, 255);
+    background-color: rgb(255, 255, 255);
+    color: white;
+}
+
+#login:hover {
+    border: 1px solid rgb(255, 255, 255);
+    background-color: rgb(21, 131, 233);
+    color: white;
+}
+
+
+.offcanvas-menu ul li a {
+    text-decoration: none !important;
+    /* Remove o sublinhado dos links */
+    color: #000 !important;
+    /* Define a cor do texto dos links */
+    display: block !important;
+    /* Faz os links ocuparem a largura total do item da lista */
+    width: 100% !important;
+    /* Faz os links ocuparem a largura total do item da lista */
+}
+
+@media(max-width:926px){
+    .offcanvas-menu {
+        background-color: white;
+        margin-left: 64%;
+        width: 31%;
+        height: 100%;
+        padding: 0% 0% 0% 0%;
+        position: fixed;
+        z-index: 3;
+    }
+}
+
+/*Animated Itens*/
+#triangulostatic {
+    z-index: 0;
+    float: right;
+    margin-right: -5px;
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0);
+    width: 20px;
+    height: 20px;
+    border-left: 25px solid #ffffff;
+    border-right: 25px solid transparent;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+}
+
+#triangulo {
+    z-index: 2;
+    float: right;
+    margin-right: -50px;
+    margin-top: 0%;
+    background-color: rgba(255, 255, 255, 0);
+    width: 20px;
+    height: 20px;
+    border-left: 25px solid #ffffff;
+    border-right: 25px solid transparent;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    transform: translate(-50%, -50%)
+}
+
+#triangulo:hover {
+    float: right;
+    margin-right: -0px;
+    margin-top: 50%;
+    height: 65px;
+    width: 65px;
+    border-radius: 100%;
+    border: 0px solid white;
+    animation: playvideo 0.5s ease-in-out;
+}
+
+#blackcircle {
+    border: 1px solid white;
+    background-color: orange;
+    border-radius: 100%;
+    height: 70px;
+    width: 70px;
+    float: right;
+    margin-right: 14%;
+}
+
+/*key frames*/
+@keyframes playvideo {
+    0% {
+        margin-right: -25px;
+        margin-top: 50%;
+        background-color: rgba(255, 255, 255, 0);
+        width: 40px;
+        height: 40px;
+        background-color: white;
+    }
+
+
+    50% {
+
+        margin-right: -35px;
+        margin-top: 50%;
+        width: 50px;
+        height: 50px;
+        border: 10px solid white;
+        background-color: white;
+    }
+
+    70% {
+
+        margin-right: -40px;
+        margin-top: 50%;
+        width: 55px;
+        height: 55px;
+        border: 10px solid white;
+    }
+
+    90% {
+        margin-right: -50px;
+        margin-top: 50%;
+        height: 65px;
+        width: 65px;
+        border-radius: 100%;
+
+        border: 10px solid white;
+    }
+
+    100% {
+        margin-right: -50px;
+        margin-top: 50%;
+        height: 65px;
+        width: 65px;
+        border-radius: 100%;
+
+        border: 1px solid white;
+    }
+}
