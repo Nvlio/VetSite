@@ -19,7 +19,7 @@ export default function ListaPage(props: { Lista: string }) {
 
     //função que faz a coleta de todos os dados da lista especifica pedida
     const Coletar = async () => {
-        const dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : ""}`)
+        const dados = await GET(`https://300e-189-124-0-88.ngrok-free.app/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : ""}`)
         
         if (dados && !dados.resp && !dados.message && !dados.msg) {
             setDatas(dados)
@@ -34,9 +34,9 @@ export default function ListaPage(props: { Lista: string }) {
     const Filtrar = async () => {
         let dados: any
         if (props.Lista === "Pacientes") {
-            dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : "_"}/${filtro.nomeItem}${auth.Conta === "funcionario" ? `/${filtro.Cara1}` : ""}`)
+            dados = await GET(`https://300e-189-124-0-88.ngrok-free.app/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : "_"}/${filtro.nomeItem}${auth.Conta === "funcionario" ? `/${filtro.Cara1}` : ""}`)
         } else {
-            dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Funcionarios" ? `${filtro.nomeItem}-${filtro.Cara1}-${filtro.Cara2}-${filtro.Cara3}` : `${filtro.nomeItem}-${filtro.Cara1}`}`)
+            dados = await GET(`https://300e-189-124-0-88.ngrok-free.app/${props.Lista}/${props.Lista === "Funcionarios" ? `${filtro.nomeItem}-${filtro.Cara1}-${filtro.Cara2}-${filtro.Cara3}` : `${filtro.nomeItem}-${filtro.Cara1}`}`)
         }
         setDatas(dados.msg ? dados.msg : dados)
 
@@ -44,7 +44,7 @@ export default function ListaPage(props: { Lista: string }) {
 
     const Deletar = async () => {
         if (exclusao.excluir) {
-            const dados = await DELETE(`http://localhost:3002/${props.Lista}/${exclusao.id}`)
+            const dados = await DELETE(`https://300e-189-124-0-88.ngrok-free.app/${props.Lista}/${exclusao.id}`)
             if (dados && (dados.resp || dados.message || dados.msg)) {
                 setErro("Erro na conexão com o servidor")
             }

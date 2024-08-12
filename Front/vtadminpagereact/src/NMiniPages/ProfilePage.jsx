@@ -13,13 +13,13 @@ export default function ProfileMiniPage() {
 
     //função focada na coleta de dados do usuario
     const Coletar = async () => {
-        const resposta = await GET(`http://localhost:3002/${auth.Conta}s/${auth.cpf}/null`)
+        const resposta = await GET(`https://300e-189-124-0-88.ngrok-free.app/${auth.Conta}s/${auth.cpf}/null`)
         setUser(resposta[0]?resposta[0]:resposta)
     }
 
     //função focada na deleta de dados
     const Deletar = async () => {
-        const resp = await DELETE(`http://localhost:3002/${auth.Conta}s/${auth.cpf}`)
+        const resp = await DELETE(`https://300e-189-124-0-88.ngrok-free.app/${auth.Conta}s/${auth.cpf}`)
         if (resp.msg.resp.message) {
             if (war !== null) {
                 war.current.focus()

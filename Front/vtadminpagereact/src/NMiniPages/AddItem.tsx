@@ -21,7 +21,7 @@ export default function AddPage(props: { lista: string }) {
         fornecedor: "",
         quantidade: ""
     })
-    const url = 'http://localhost:3002/'
+    const url = 'https://300e-189-124-0-88.ngrok-free.app/'
     const navegar = useNavigate()
     const buttonFlex = { justifyContent: 'center', marginTop: "05%", gap: "03%", marginRight: "10%" }
 

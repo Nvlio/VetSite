@@ -41,7 +41,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
         sexo: "",
         raca: "",
     })
-    const url = 'http://localhost:3002/'
+    const url = 'https://300e-189-124-0-88.ngrok-free.app/'
     const auth = CheckAuteticacao()
 
 
@@ -107,7 +107,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
         //old version ---if (user === "Funcionário" || auth.Conta === "funcionario") {
         if (props.lista === "Funcionarios") {
             setEstado("carregando")
-            fetch("http://localhost:3002/Unidades", { method: "GET", headers: { 'content-type': "application/json" } })
+            fetch("https://300e-189-124-0-88.ngrok-free.app/Unidades", { method: "GET", headers: { 'content-type': "application/json" } })
                 .then((resp) => { return resp.json() })
                 .then((resp) => {
                     try {
@@ -129,7 +129,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                 })
         } else if (props.lista === "Pacientes" && !extra) {
             setEstado("carregando")
-            fetch("http://localhost:3002/Especies", { method: "GET", headers: { 'content-type': "application/json" } })
+            fetch("https://300e-189-124-0-88.ngrok-free.app/Especies", { method: "GET", headers: { 'content-type': "application/json" } })
                 .then((resp) => { return resp.json() })
                 .then((resp) => {
                     try {
@@ -147,7 +147,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
         } else if (extra) {
             const especie = data.especie
 
-            fetch(`http://localhost:3002/Racas/${especie}`, { method: "GET", headers: { 'content-type': "application/json" } })
+            fetch(`https://300e-189-124-0-88.ngrok-free.app/Racas/${especie}`, { method: "GET", headers: { 'content-type': "application/json" } })
                 .then((resp) => { return resp.json() })
                 .then((resp) => {
                     try {

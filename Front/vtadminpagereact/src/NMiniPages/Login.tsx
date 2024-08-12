@@ -13,7 +13,7 @@ export default function FormuloginMini() {
     const [user, setUser] = useState('Cliente')
     const [password, setPassword] = useState({ type: 'password', img: require("../public/simbolos/eyeClosed.png") })
     const [data, setData] = useState({ email: "", senha: "", erro: "" })
-    const url = 'http://localhost:3002/' //url do servidor
+    const url = 'https://300e-189-124-0-88.ngrok-free.app/' //url do servidor
     const navegar = useNavigate()//vai permitir mudar de url
 
     const buttonFlex = { justifyContent: 'center', marginTop: "05%", gap: "03%", marginRight: "10%" }
@@ -21,12 +21,12 @@ export default function FormuloginMini() {
     //redireciona o usuário de volta para a home page
     const Redirect = () => {
         navegar("/Cadastro", { replace: true })
-        
+
     }
 
     //função que valida se os dados estão corretos
     const ValidarDados = async (e: any) => {
-        
+
 
         if (e.key === "Enter") {
             //chama caso a validação seja feita ao terminar um campo
@@ -59,23 +59,9 @@ export default function FormuloginMini() {
 
     //função que envia os dados do formulario para o servidor
     const EnviarData = async () => {
-        alert("oi")
-        try{
-            const x = await fetch("https://ddb3-189-124-0-88.ngrok-free.app/Comentarios",{method:"GET",headers: {'ngrok-skip-browser-warning': 'true'}})
-            .then((resp)=>{return resp.json()})
-            .then((resposta)=>{
-                console.log(resposta)
-                return resposta
-            })
-            alert("x")
-        }catch(e){
-            console.log(e)
-            alert(e)
-        }
-        
-/*
 
-if (data.email !== "" && data.senha !== "") {
+
+        if (data.email !== "" && data.senha !== "") {
             const resposta = await ValidarDados({ key: 'Fim' })
             if (!resposta) {
                 return
@@ -87,7 +73,7 @@ if (data.email !== "" && data.senha !== "") {
             return
         }
 
-*/
+
 
 
 
