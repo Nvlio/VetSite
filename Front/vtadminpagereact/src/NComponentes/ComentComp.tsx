@@ -18,7 +18,7 @@ export default function CommentList() {
         const [commentActive, setCommentActiv] = useState(0)
 
         async function conectar(){
-            const itens:any = await GET("https://ddb3-189-124-0-88.ngrok-free.app/Comentarios")
+            const itens:any = await GET("https://ebe1-189-124-0-88.ngrok-free.app/Comentarios")
             setFcomments(itens)
         }
 
