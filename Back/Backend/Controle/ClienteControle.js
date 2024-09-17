@@ -5,7 +5,7 @@ export default class ClienteControle {
 
     //função para pegar dados
     async GET(req, resp) {
-        if (req.method == "GET") {
+        if (req.    method == "GET") {
 
             const modelo = new ClienteMod();
             const resposta = await modelo.Pegar()

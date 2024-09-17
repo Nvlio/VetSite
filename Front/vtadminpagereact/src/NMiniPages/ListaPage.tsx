@@ -9,17 +9,17 @@ import { Prev } from "react-bootstrap/esm/PageItem";
 
 
 export default function ListaPage(props: { Lista: string }) {
-    const [datas, setDatas] = useState()
-    const [chave, setChave] = useState()
-    const FiltroPlus = useRef("")
+    const [datas, setDatas]:any = useState({})
+    const [chave, setChave]:any = useState()
+    const FiltroPlus:any = useRef()
     const [exclusao, setExclusao] = useState({ aberto: false, excluir: false, id:"" })
     const [erro, setErro] = useState("")
     const [filtro, setFiltro] = useState({ nomeItem: "_", Cara1: "_", Cara2: "_", Cara3: "_" })
-    const auth = CheckAuteticacao()
+    const auth:any = CheckAuteticacao()
 
     //função que faz a coleta de todos os dados da lista especifica pedida
     const Coletar = async () => {
-        const dados = await GET(`https://300e-189-124-0-88.ngrok-free.app/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : ""}`)
+        const dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : ""}`)
         
         if (dados && !dados.resp && !dados.message && !dados.msg) {
             setDatas(dados)
@@ -34,9 +34,9 @@ export default function ListaPage(props: { Lista: string }) {
     const Filtrar = async () => {
         let dados: any
         if (props.Lista === "Pacientes") {
-            dados = await GET(`https://300e-189-124-0-88.ngrok-free.app/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : "_"}/${filtro.nomeItem}${auth.Conta === "funcionario" ? `/${filtro.Cara1}` : ""}`)
+            dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : "_"}/${filtro.nomeItem}${auth.Conta === "funcionario" ? `/${filtro.Cara1}` : ""}`)
         } else {
-            dados = await GET(`https://300e-189-124-0-88.ngrok-free.app/${props.Lista}/${props.Lista === "Funcionarios" ? `${filtro.nomeItem}-${filtro.Cara1}-${filtro.Cara2}-${filtro.Cara3}` : `${filtro.nomeItem}-${filtro.Cara1}`}`)
+            dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Funcionarios" ? `${filtro.nomeItem}-${filtro.Cara1}-${filtro.Cara2}-${filtro.Cara3}` : `${filtro.nomeItem}-${filtro.Cara1}`}`)
         }
         setDatas(dados.msg ? dados.msg : dados)
 
@@ -44,8 +44,9 @@ export default function ListaPage(props: { Lista: string }) {
 
     const Deletar = async () => {
         if (exclusao.excluir) {
-            const dados = await DELETE(`https://300e-189-124-0-88.ngrok-free.app/${props.Lista}/${exclusao.id}`)
-            if (dados && (dados.resp || dados.message || dados.msg)) {
+            const dados = await DELETE(`http://localhost:3002/${props.Lista}/${exclusao.id}`)
+            console.log(dados)
+            if (dados && (dados.resp || dados.message || (dados.msg && dados.msg.resp!="work" && dados.msg!="Unidade Excluída"))) {
                 setErro("Erro na conexão com o servidor")
             }
             setExclusao(()=>({aberto:false,excluir:false,id:""}))
@@ -153,7 +154,7 @@ export default function ListaPage(props: { Lista: string }) {
                                             return (
                                                 <tr >
                                                     <td style={{ border: "1px solid black" }}>
-                                                        {data.sexo === 0 ? "Feminino" : "masculino"}
+                                                        {data.sexo === 1 ? "Feminino" : "masculino"}
                                                     </td>
                                                     <td style={{ border: "1px solid black" }}>
                                                         {data.especie}
@@ -208,7 +209,7 @@ export default function ListaPage(props: { Lista: string }) {
                                                         : null}
                                                     <div style={{ border: "1px solid black" }}>
                                                         <LinkContainer style={{ width: "100%", backgroundColor: "blue", color: "white" }} to="/Editar" state={{ dados: data, lista: props.Lista }}><button >Editar</button></LinkContainer>
-                                                        <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState)=>({...prevState,aberto:true,id:data.data.cpf})) }} >Excluir</button>
+                                                        <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState)=>({...prevState,aberto:true,id:data  .cpf})) }} >Excluir</button>
                                                     </div>
                                                 </tr>
                                             )

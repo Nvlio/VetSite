@@ -10,16 +10,17 @@ export default function ProfileMiniPage() {
     const [user, setUser] = useState({})
     const auth = CheckAuteticacao()
     const war = useRef()
+    console.log(auth.Conta)
 
     //função focada na coleta de dados do usuario
     const Coletar = async () => {
-        const resposta = await GET(`https://300e-189-124-0-88.ngrok-free.app/${auth.Conta}s/${auth.cpf}/null`)
+        const resposta = await GET(`http://localhost:3002/${auth.Conta}s/${auth.cpf}/null`)
         setUser(resposta[0]?resposta[0]:resposta)
     }
 
     //função focada na deleta de dados
     const Deletar = async () => {
-        const resp = await DELETE(`https://300e-189-124-0-88.ngrok-free.app/${auth.Conta}s/${auth.cpf}`)
+        const resp = await DELETE(`http://localhost:3002/${auth.Conta}s/${auth.cpf}`)
         if (resp.msg.resp.message) {
             if (war !== null) {
                 war.current.focus()
@@ -52,8 +53,8 @@ export default function ProfileMiniPage() {
                     <h4>{user.nome}</h4>
                     <h4>{user.email}</h4>
                     <h4>{user.telefone}</h4>
-                    <LinkContainer to={"/Editar"} state={{dados:user,lista:"Profile"}}>
-                        <Button variant="outline-primary">Editar</Button>
+                    <LinkContainer to={"/Editar"} state={{dados:user,lista:"Profile",conta:auth.Conta}}>
+                        <Button variant="outline-primary" >Editar</Button>
                     </LinkContainer>
                     <Button onClick={() => { Deletar() }} variant="outline-danger">Excluir</Button>
                 </div>

@@ -29,7 +29,7 @@ export default class ClienteDB {
             let sqlCode;
             let itens;
             if (cpf) {
-                sqlCode = "SELECT * WHERE cpf =?";
+                sqlCode = "SELECT * FROM `usuario` WHERE cpf =?";
                 itens = [cpf]
             } else {
                 sqlCode = "SELECT * FROM `usuario` WHERE nome LIKE ?";

@@ -14,10 +14,11 @@ export default function FormPage(props: { tipo: number }) {
     const { tamanhoJanela } = useContext(Contexto)
     let dados:any;
     let lista:any;
+    let conta:any;
     if (location.state !== null) {
             dados=location.state.dados
             lista = location.state.lista
-
+            conta = location.state.conta
         }
     
 
@@ -38,7 +39,7 @@ export default function FormPage(props: { tipo: number }) {
     else if (props.tipo === 2) {
         return (
             <LayoutMain>
-                <FormucadastroMini info={""} />
+                <FormucadastroMini info={""} lista={""} conta={""}/>
             </LayoutMain>
         )
     } 
@@ -49,7 +50,7 @@ export default function FormPage(props: { tipo: number }) {
     else {
         return (
             <LayoutMain>
-                <FormucadastroMini info={dados} lista={lista} />
+                <FormucadastroMini info={dados} lista={lista} conta={conta} />
             </LayoutMain>
         )
     }

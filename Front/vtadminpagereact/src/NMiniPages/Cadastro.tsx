@@ -6,13 +6,14 @@ import Mask from '../nFuncoes/Validar.ts';
 
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Cadastro} from '../nFuncoes/POST.ts';
+import { Cadastro } from '../nFuncoes/POST.ts';
 import UPDATE from '../nFuncoes/UPDATE.ts';
-import { CheckAuteticacao } from '../nFuncoes/auntenticar.js';
+import { Autenticar, CheckAuteticacao } from '../nFuncoes/auntenticar.js';
+import Inserir from '../nFuncoes/POSTn.ts';
 
 
 //minipage focada no cadastro
-export default function FormucadastroMini(props: { info: any, lista: string }) {
+export default function FormucadastroMini(props: { info: any, lista: string, conta:string }) {
     const { tamanhoJanela } = useContext(Contexto)
     const [estado, setEstado] = useState("ocioso")
     const [user, setUser] = useState('Cliente')
@@ -37,11 +38,11 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
         valor: "",
         fornecedor: "",
         quantidade: "",
-        especie: 1,
+        especie: "",
         sexo: "",
         raca: "",
     })
-    const url = 'https://300e-189-124-0-88.ngrok-free.app/'
+    const url = 'http://localhost:3002/'
     const auth = CheckAuteticacao()
 
 
@@ -57,39 +58,87 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
     LEMBRAR DE COLOCAR TODAS ESSAS FUNÇÕES EM LUGARES SOZINHOS PARA REUTILIZAR
     */
 
-    const ValidarDados = async (e: any) => {
-        if (e.key === "Enter") {
-            const resposta = await Mask(e.target.value, 'Email')
-            if (resposta === false && data.email !== "") {
-                e.target.className = "ErroInput custom-input"
-                setData((prevState) => ({ ...prevState, erro: "Alguns campos estão errados" }))
+    const ValidarDados = async (e: any, tipo: string, dado: {} | null) => {
+        let resp: any=true;
+        let msg: string;
+        let valor: string;
+        if (e.key === "Fim") {
+            console.log("oi")
+            while(resp){
+                resp = await Mask(data.email, "Email")
+                console.log(resp)
+                resp = await Mask(data.tel, "Telefone")
+                resp = await Mask(data.cpf, "CPF")
+                break
+            }
+            if(!resp){
+                setData((prevState) => ({ ...prevState, erro: `Campos Errados` }))
                 return false
-            } else {
-                e.target.className = "form-control custom-input"
-                setData((prevState) => ({ ...prevState, erro: "" }))
+            }else{
+                setData((prevState) => ({ ...prevState, erro: `` }))
                 return true
             }
-        } else if (e.key === "Fim") {
-            const resposta = await Mask(data.email, 'Email')
-            if (resposta === false && data.email !== "") {
-                setData((prevState) => ({ ...prevState, erro: "Alguns campos estão errados" }))
-                return false
+        }
+        else if (e.key === "Enter") {
+            if (tipo === "senha") {
+                msg = data.senha !== data.senha2 ? "senhas diferentes" : ""
+                console.log(msg)
+
             } else {
-                setData((prevState) => ({ ...prevState, erro: "" }))
-                return true
+                switch (tipo) {
+                    case "email":
+                        console.log("email")
+                        resp = await Mask(data.email, "Email")
+                        console.log(resp)
+                        break
+                    case "tel":
+                        resp = await Mask(data.tel, "Telefone")
+                        valor = resp ? `(${data.tel.substring(0, 2)}) ${data.tel.substring(2, 7)}-${data.tel.substring(7)}` : ""
+                        setData((prevState) => ({ ...prevState, tel: valor }))
+                        e.target.value = valor
+                        break
+                    case "cpf":
+                        resp = await Mask(data.cpf, "CPF")
+                        valor = resp ? `${data.cpf.substring(0, 3)}.${data.cpf.substring(3, 6)}.${data.cpf.substring(6, 9)}-${data.cpf.substring(9)}` : ""
+                        setData((prevState) => ({ ...prevState, cpf: valor }))
+                        e.target.value = valor
+                        break
+                }
+                msg = resp ? "" : "Campos Errados"
             }
-        } else {
-            return false
+            console.log(msg)
+            setData((prevState) => ({ ...prevState, erro: `${msg}` }))
+            return resp
         }
     }
 
     const EnviarData = async () => {
         if (data.email !== "" && data.senha !== "") {
-            const resposta = await ValidarDados({ key: 'Fim' })
+            const resposta = await ValidarDados({key:"Fim"}, "all", "")
             if (!resposta) {
                 return
             } else {
-                await Cadastro(url, data, user)
+                const body = JSON.stringify({
+                    senha: data.senha,
+                    email: data.email,
+                    nome: data.nome,
+                    telefone: data.tel,
+                    cpf: data.cpf,
+                    funcao: data.funcao,
+                    unidade: data.unidade,
+                    especialidade: data.especialidade
+                })
+                const resp = await Inserir(`${url}${user}s`, body)
+                if (resp.msg && resp.msg.message){
+                    let msg = resp.msg.message
+                    if (msg.substring(0,9)==="Duplicate"){
+                        msg = "CPF já está sendo utilizado"
+                    }
+                    setData((prevState)=>({...prevState,erro:"Email já utilizado"}))
+                }else{
+                    Autenticar(resp.token)
+                    window.location.href="/"
+                }
             }
         } else {
             setData((prevState) => ({ ...prevState, erro: "Há campos que não foram completos" }))
@@ -107,7 +156,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
         //old version ---if (user === "Funcionário" || auth.Conta === "funcionario") {
         if (props.lista === "Funcionarios") {
             setEstado("carregando")
-            fetch("https://300e-189-124-0-88.ngrok-free.app/Unidades", { method: "GET", headers: { 'content-type': "application/json" } })
+            fetch("http://localhost:3002/Unidades", { method: "GET", headers: { 'content-type': "application/json" } })
                 .then((resp) => { return resp.json() })
                 .then((resp) => {
                     try {
@@ -129,7 +178,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                 })
         } else if (props.lista === "Pacientes" && !extra) {
             setEstado("carregando")
-            fetch("https://300e-189-124-0-88.ngrok-free.app/Especies", { method: "GET", headers: { 'content-type': "application/json" } })
+            fetch("http://localhost:3002/Especies", { method: "GET", headers: { 'content-type': "application/json" } })
                 .then((resp) => { return resp.json() })
                 .then((resp) => {
                     try {
@@ -147,18 +196,22 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
         } else if (extra) {
             const especie = data.especie
 
-            fetch(`https://300e-189-124-0-88.ngrok-free.app/Racas/${especie}`, { method: "GET", headers: { 'content-type': "application/json" } })
+            fetch(`http://localhost:3002/Racas/${especie}`, { method: "GET", headers: { 'content-type': "application/json" } })
                 .then((resp) => { return resp.json() })
                 .then((resp) => {
                     try {
                         setData((prevState) => ({ ...prevState, erro: "" }))
                         const listN: Array<object> = []
                         for (let item of resp.msg) {
-                            listN.push({ nome: item['nome'], id: item['id'] })
+                            listN.push({ nome: item['nome'], id: item['id'],especie:item["especie"] })
                         }
+                        setData((prevState)=>({...prevState,raca:listN[0].id}))
                         setRacaNome(listN)
                     } catch (e) {
-                        setData((prevState) => ({ ...prevState, erro: "Erro ao conectar com servidor" }))
+                        if(data.especie!=""){
+                            setData((prevState) => ({ ...prevState, erro: "Erro ao conectar com servidor" }))
+                        }
+                        
                     }
 
                 })
@@ -168,13 +221,18 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
     }
 
     const EditarData = async () => {
+        console.log(props.lista)
         let ident: any;
-        if (props.lista === "Funcionarios" || props.lista === "Clientes") {
+        let contaUser :any;
+        if ((props.lista === "Funcionarios" || props.lista === "Clientes")|| (props.conta === "funcionario" || props.conta === "cliente")) {
             ident = props.info.cpf
+            contaUser = props.conta==="cliente"?"Clientes":"Funcionarios"
         } else {
+            contaUser = props.lista
             ident = props.info.id
         }
-        await UPDATE(`${url}${props.lista}/${ident}`, props.lista, JSON.stringify({
+        console.log(ident)
+        await UPDATE(`${url}${contaUser}/${ident}`, props.lista, JSON.stringify({
             senha: data.senha,
             email: data.email,
             nome: data.nome,
@@ -193,6 +251,11 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
         }))
     }
 
+    const filtro = (valor)=>{
+        const racaFiltrada = RacaNome.filter((raca)=>{if(raca.nome===valor){return raca}})
+        setData((prevState) => ({ ...prevState, raca:racaFiltrada[0].id }))
+    }
+
     //define o valor inicial do campo como sendo o valor de placeholder
     const BeginState = (e, tipo) => {
         if (data[`${tipo}`] === "") {
@@ -202,7 +265,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
 
     //faz a coleta quando o user mudar
     useEffect(() => {
-        coletar()
+        coletar("")
     }, [user])
 
     useEffect(() => {
@@ -225,7 +288,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                     <input type="text" className="form-control custom-input" placeholder={props.info?.nome}
                                         onClick={(e) => { BeginState(e, "nome") }}
                                         onChange={(e) => { setData((prevState) => ({ ...prevState, nome: e.target.value })) }}
-                                        onKeyDown={(e) => { ValidarDados(e) }}
+
                                     />
                                 </div>
 
@@ -233,8 +296,9 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                 <div className="FormBody">
                                     <input type="telephone" className="form-control custom-input" placeholder={props.info?.telefone}
                                         onClick={(e) => { BeginState(e, "tel") }}
+                                        maxLength={11}
                                         onChange={(e) => { setData((prevState) => ({ ...prevState, tel: e.target.value })) }}
-                                        onKeyDown={(e) => { ValidarDados(e) }}
+                                        onKeyDown={(e) => { ValidarDados(e, "tel", data.tel) }}
                                     />
                                 </div>
 
@@ -242,7 +306,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                     <input type="text" className="form-control custom-input" placeholder={props.info?.email}
                                         onClick={(e) => { BeginState(e, "email") }}
                                         onChange={(e) => { setData((prevState) => ({ ...prevState, email: e.target.value })) }}
-                                        onKeyDown={(e) => { ValidarDados(e) }}
+                                        onKeyDown={(e) => { ValidarDados(e, "email", data.email) }}
                                     />
                                 </div>
 
@@ -296,7 +360,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                         <div className="FormBody" style={{ marginLeft: '-10%' }}>
                                             <input type="text" className="form-control custom-input" placeholder="função"
                                                 onChange={(e) => { setData((prevState) => ({ ...prevState, funcao: e.target.value })) }}
-                                                onKeyDown={(e) => { ValidarDados(e) }}
+                                                
                                             />
                                         </div>
                                     </div>
@@ -326,7 +390,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                     <input type="text" className="form-control custom-input" placeholder={props.info?.nome}
                                         onClick={(e) => { BeginState(e, "nome") }}
                                         onChange={(e) => { setData((prevState) => ({ ...prevState, nome: e.target.value })) }}
-                                        onKeyDown={(e) => { ValidarDados(e) }}
+                                       
                                     />
                                 </div>
                                 {props.lista === "Unidades" ?
@@ -336,15 +400,16 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                             <input type="text" className="form-control custom-input" placeholder={props.info?.endereco}
                                                 onClick={(e) => { BeginState(e, "nome") }}
                                                 onChange={(e) => { setData((prevState) => ({ ...prevState, endereco: e.target.value })) }}
-                                                onKeyDown={(e) => { ValidarDados(e) }}
+
                                             />
                                         </div>
                                         <div className="FormBody">
                                             <p className='form'>Telefone</p>
                                             <input type="text" className="form-control custom-input" placeholder={props.info?.telefone}
                                                 onClick={(e) => { BeginState(e, "nome") }}
+                                                maxLength={11}
                                                 onChange={(e) => { setData((prevState) => ({ ...prevState, tel: e.target.value })) }}
-                                                onKeyDown={(e) => { ValidarDados(e) }}
+                                                onKeyDown={(e) => { ValidarDados(e, "tel", data.tel)}}
                                             />
                                         </div>
                                     </>
@@ -355,7 +420,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                             <input type="number" className="form-control custom-input" placeholder={props.info?.valor}
                                                 onClick={(e) => { BeginState(e, "nome") }}
                                                 onChange={(e) => { setData((prevState) => ({ ...prevState, valor: e.target.value })) }}
-                                                onKeyDown={(e) => { ValidarDados(e) }}
+                                                
                                             />
                                         </div>
                                         <div className="FormBody">
@@ -363,7 +428,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                             <input type="number" className="form-control custom-input" placeholder={props.info?.quantidade}
                                                 onClick={(e) => { BeginState(e, "nome") }}
                                                 onChange={(e) => { setData((prevState) => ({ ...prevState, quantidade: e.target.value })) }}
-                                                onKeyDown={(e) => { ValidarDados(e) }}
+
                                             />
                                         </div>
                                         <div className="FormBody">
@@ -371,7 +436,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                             <input type="text" className="form-control custom-input" placeholder={props.info?.fornecedor}
                                                 onClick={(e) => { BeginState(e, "nome") }}
                                                 onChange={(e) => { setData((prevState) => ({ ...prevState, fornecedor: e.target.value })) }}
-                                                onKeyDown={(e) => { ValidarDados(e) }}
+
                                             />
                                         </div>
 
@@ -406,7 +471,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                         <div className="FormBody" style={{ marginLeft: '-10%' }}>
                                             <input type="text" className="form-control custom-input" placeholder="função"
                                                 onChange={(e) => { setData((prevState) => ({ ...prevState, funcao: e.target.value })) }}
-                                                onKeyDown={(e) => { ValidarDados(e) }}
+
                                             />
                                         </div>
                                     </div>
@@ -437,23 +502,23 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                     <input type="text" className="form-control custom-input" placeholder={props.info?.nome}
                                         onClick={(e) => { BeginState(e, "nome") }}
                                         onChange={(e) => { setData((prevState) => ({ ...prevState, nome: e.target.value })) }}
-                                        onKeyDown={(e) => { ValidarDados(e) }}
+
                                         key={"nomeEditar"} />
                                 </div>
 
-                                <select className="form-control custom-input form" name="unidade" id="unidade" required
+                                <select className="form-control custom-input form" name="especie" id="especie" 
                                     onChange={(e) => setData((prevState) => ({ ...prevState, especie: EspecieNome[e.target.selectedIndex]["id"] }))}>
-                                    {EspecieNome.map((especie: object) => {
+                                    {EspecieNome.map((especie: object,index:number) => {
                                         return (
                                             <>
-                                                <option key={especie['nome']} value={especie['nome']}>{especie['nome']}</option>
+                                                <option key={especie[`nome${index+index*index}`]} value={especie['nome']}>{especie['nome']}</option>
                                             </>
                                         )
                                     })}
                                 </select>
 
-                                <select className="form-control custom-input form" name="unidade" id="unidade" required
-                                    onChange={(e) => setData((prevState) => ({ ...prevState, raca: RacaNome[e.target.selectedIndex]["id"] }))}>
+                                <select className="form-control custom-input form" name="raca" id="raca" 
+                                    onChange={(e) => {filtro(e.target.selectedOptions[0].value)}}>
                                     {RacaNome.map((raca: object) => {
                                         return (
                                             <>
@@ -490,7 +555,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                 <input type="text" className="form-control custom-input" placeholder="Nome"
                                     required
                                     onChange={(e) => { setData((prevState) => ({ ...prevState, nome: e.target.value })) }}
-                                    onKeyDown={(e) => { ValidarDados(e) }}
+
                                 />
                             </div>
 
@@ -498,7 +563,8 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                 <input type="text" className="form-control custom-input" placeholder="cpf"
                                     required
                                     onChange={(e) => { setData((prevState) => ({ ...prevState, cpf: e.target.value })) }}
-                                    onKeyDown={(e) => { ValidarDados(e) }}
+                                    maxLength={11}
+                                    onKeyDown={(e) => { ValidarDados(e, "cpf", data.cpf) }}
                                 />
                             </div>
 
@@ -506,7 +572,8 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                 <input type="telephone" className="form-control custom-input" placeholder="Telefone"
                                     required
                                     onChange={(e) => { setData((prevState) => ({ ...prevState, tel: e.target.value })) }}
-                                    onKeyDown={(e) => { ValidarDados(e) }}
+                                    maxLength={11}
+                                    onKeyDown={(e) => { ValidarDados(e, "tel", data.tel) }}
                                 />
                             </div>
 
@@ -514,7 +581,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                 <input type="text" className="form-control custom-input" placeholder="Seu Email"
                                     required
                                     onChange={(e) => { setData((prevState) => ({ ...prevState, email: e.target.value })) }}
-                                    onKeyDown={(e) => { ValidarDados(e) }}
+                                    onKeyDown={(e) => { ValidarDados(e, "email", data.email) }}
                                 />
                             </div>
 
@@ -567,7 +634,7 @@ export default function FormucadastroMini(props: { info: any, lista: string }) {
                                     <div className="FormBody" style={{ marginLeft: '-10%' }}>
                                         <input type="text" className="form-control custom-input" placeholder="função" required
                                             onChange={(e) => { setData((prevState) => ({ ...prevState, funcao: e.target.value })) }}
-                                            onKeyDown={(e) => { ValidarDados(e) }}
+                                            
                                         />
                                     </div>
                                 </div>

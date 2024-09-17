@@ -94,7 +94,7 @@ export default function ImagePage(props: {
                             {props.img === 1 ?
 
                                 <div style={{ margin: tamanhoJanela.widht <= 982 ? "0% 40%" : "" }}>
-                                    <a href="https://www.youtube.com/watch?v=JxwaDBdk3vk" target="_blank" rel="noreferrer"><div id="blackcircle"><div id="triangulostatic"><div id="triangulo" /></div></div></a>
+                                    <a href="http://www.youtube.com/watch?v=JxwaDBdk3vk" target="_blank" rel="noreferrer"><div id="blackcircle"><div id="triangulostatic"><div id="triangulo" /></div></div></a>
                                 </div>
                                 :
                                 null}

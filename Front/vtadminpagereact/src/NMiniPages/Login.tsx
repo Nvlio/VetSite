@@ -6,6 +6,8 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Login } from '../nFuncoes/POST.ts';
 import login from '../nFuncoes/testando.ts';
+import Inserir from '../nFuncoes/POSTn.ts';
+import { Autenticar } from '../nFuncoes/auntenticar.js';
 
 
 //mini pagina voltada a formulario de Login
@@ -13,7 +15,7 @@ export default function FormuloginMini() {
     const [user, setUser] = useState('Cliente')
     const [password, setPassword] = useState({ type: 'password', img: require("../public/simbolos/eyeClosed.png") })
     const [data, setData] = useState({ email: "", senha: "", erro: "" })
-    const url = 'https://300e-189-124-0-88.ngrok-free.app/' //url do servidor
+    const url = 'http://localhost:3002/' //url do servidor
     const navegar = useNavigate()//vai permitir mudar de url
 
     const buttonFlex = { justifyContent: 'center', marginTop: "05%", gap: "03%", marginRight: "10%" }
@@ -66,7 +68,17 @@ export default function FormuloginMini() {
             if (!resposta) {
                 return
             } else {
-                await Login(url, data, user)
+                const body = JSON.stringify({
+                    senha: data.senha,
+                    email: data.email
+                })
+                const resposta = await Inserir(`${url}${user==="Funcionário"?"Funcionario":"Cliente"}s/login`, body)
+                if(resposta.resp==false){
+                    setData((prevState)=>({...prevState,erro:"Conta não existe ou dados errados"}))
+                }else{
+                    Autenticar(resposta.token)
+                    window.location.href="/"
+                }
             }
         } else {
             setData((prevState) => ({ ...prevState, erro: "Há campos que não foram completos" }))

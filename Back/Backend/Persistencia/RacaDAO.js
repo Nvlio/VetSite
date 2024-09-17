@@ -38,7 +38,7 @@ export default class RacaDB {
             let modelo=[]
 
             for (let item of itens) {
-                const prod = new RacaMod(item.nome,item.especie, item.id)
+                const prod = new RacaMod(item.nome,item.id_especie, item.id)
                 modelo.push(prod.ToJSON())
             }
 

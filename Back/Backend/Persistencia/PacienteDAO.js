@@ -31,7 +31,7 @@ export default class PacienteDB {
             const listaFim = []
 
             for (let item of list) {
-                const modelo = new PacienteMod(item.id, item.sexo, item.cpf_dono, item.especie, item.raca, item.nome)
+                const modelo = new PacienteMod(item.numero, item.sexo, item.cpf_dono, item.especie, item.raca, item.nome)
                 listaFim.push(modelo.ToJSON())
             }
 
@@ -92,7 +92,7 @@ export default class PacienteDB {
     async POST(nome, especie, raca, sexo, cpf_dono) {
         try {
             const conexao = await Conectar();
-            const sqlCode = "INSERT INTO paciente (nome,especie,raca,sexo,cpf_dono) VALUES (?,?,?,?,?)"
+            const sqlCode = "INSERT INTO paciente (nome,id_especie,id_raca,sexo,cpf_dono) VALUES (?,?,?,?,?)"
             const valores = [nome, especie, raca, sexo, cpf_dono]
             await conexao.query(sqlCode, valores)
 
@@ -114,12 +114,12 @@ export default class PacienteDB {
                 conector = ","
             }
             if (especie != "") {
-                sqlCode += `${conector} especie=?`
+                sqlCode += `${conector} id_especie=?`
                 valores.push(especie)
                 conector = ","
             }
             if (raca != "") {
-                sqlCode += `${conector} raca=?`
+                sqlCode += `${conector} id_raca=?`
                 valores.push(raca)
             }
             sqlCode += " WHERE id = ?"

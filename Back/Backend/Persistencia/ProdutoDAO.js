@@ -63,7 +63,7 @@ export default class ProdutoDB {
 
     async PUT(conexao, nome, valor, validade, quantidade, fornecedor, id) {
         try {
-            let sqlCode = "UPDATE produtos"
+            let sqlCode = "UPDATE produtos "
             let conector = "SET "
             let values = []
 
