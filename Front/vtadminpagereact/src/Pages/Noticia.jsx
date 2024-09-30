@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import NavMenu from "../Componentes/nav";
+import NavMenuBarComp from "../NComponentes/NavMenu.jsx";
 import NewsStruc from "../Componentes/noticiaComponent.jsx";
 import backGroundImg from "../public/Erro-bg.png"
-import NavMenuBarComp from "../NComponentes/NavMenu.jsx";
 
 export default function NewsPage(prop){
     const location = useLocation()
@@ -28,6 +27,7 @@ export default function NewsPage(prop){
     }
     useEffect(()=>{console.log(noticia  )},[noticia]) 
 
+    //pagina para a noticia especifica
     return(
         <>
         <div style={{zindex:"2",position:"relative"}}>

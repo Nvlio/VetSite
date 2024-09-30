@@ -6,7 +6,7 @@ import { Autenticar } from "./auntenticar";
 //função que faz POST voltado para cadastro
 export async function Login(url: string, info: { senha: string, email: string }, tipo: string) {
     tipo = tipo === "Funcionário" ? "Funcionarios" : 'Clientes'
-    const x = await  fetch(`${url}${tipo}/${'login'}`, {
+    const x = await fetch(`${url}${tipo}/${'login'}`, {
         method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
             senha: info.senha,
             email: info.email
@@ -14,11 +14,11 @@ export async function Login(url: string, info: { senha: string, email: string },
     }).then((resp) => {
         return resp.json();
     }).then((resposta) => {
-        
+
         if (resposta.resp === true) {
             Autenticar(resposta.token);
             window.location.href = "/";
-        }else{
+        } else {
             alert("fui2")
             return `${url}${tipo}`
         }
@@ -64,7 +64,7 @@ export async function Cadastro(
         if (resposta.resp === 'work') {
             Autenticar(resposta.token);
             window.location.href = "/";
-        }else if(resposta.msg.message==="Duplicate entry '46478910890' for key 'PRIMARY'"){
+        } else if (resposta.msg.message === "Duplicate entry '46478910890' for key 'PRIMARY'") {
             alert("CPF já está sendo utilizado")
         }
     });
@@ -72,15 +72,18 @@ export async function Cadastro(
 
 }
 
-export async function POST(url: string, itens: any) {
+export async function POST(url: string, itens: any, extra: string) {
     return fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: itens })
         .then((resposta) => { return resposta.json() })
-        .then((resp) => { 
+        .then((resp) => {
             console.log(resp)
-            if(resp.message){
-                return resp 
-            }else{
-                window.location.href="/Lista"
+            if (resp.message) {
+                return resp
+            } else {
+                    if(extra!==null){
+                        
+                        window.location.href = `/${extra}`
+                    }
             }
         })
 

@@ -4,8 +4,6 @@ import Mask from '../nFuncoes/Validar.ts';
 
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Login } from '../nFuncoes/POST.ts';
-import login from '../nFuncoes/testando.ts';
 import Inserir from '../nFuncoes/POSTn.ts';
 import { Autenticar } from '../nFuncoes/auntenticar.js';
 
@@ -73,11 +71,12 @@ export default function FormuloginMini() {
                     email: data.email
                 })
                 const resposta = await Inserir(`${url}${user==="Funcionário"?"Funcionario":"Cliente"}s/login`, body)
-                if(resposta.resp==false){
+                console.log(resposta)
+                if(resposta.resp==false || resposta.token===null){
                     setData((prevState)=>({...prevState,erro:"Conta não existe ou dados errados"}))
                 }else{
                     Autenticar(resposta.token)
-                    window.location.href="/"
+                    window.location.replace("/")
                 }
             }
         } else {

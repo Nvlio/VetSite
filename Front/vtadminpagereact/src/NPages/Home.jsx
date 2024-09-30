@@ -11,6 +11,8 @@ import CommentList from "../NComponentes/ComentComp.tsx";
 export default function HomePage() {
     const { tamanhoJanela } = useContext(Contexto)
 
+    
+
     return (
         <LayoutMain>
             <div className="BlackBG" />

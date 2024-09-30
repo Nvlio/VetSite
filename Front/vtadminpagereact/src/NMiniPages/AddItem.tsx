@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { POST } from '../nFuncoes/POST.ts';
 import GET from '../nFuncoes/GET.ts';
 import { CheckAuteticacao } from '../nFuncoes/auntenticar.js';
+import TelaAdd from '../NComponentes/Adicionar.tsx';
 
 
 //minipage focada no cadastro
@@ -15,7 +16,7 @@ export default function AddPage(props: { lista: string }) {
     const { tamanhoJanela } = useContext(Contexto)
     let auth: any
     auth = CheckAuteticacao()
-    const [user, setUser] = useState('Cliente')
+    const [show, setShow] = useState('Fechado')
     const [raca, setRaca] = useState({ racalist: [] })
     const [especie, setEspecie] = useState({ especielist: [] })
     const [data, setData] = useState({
@@ -29,13 +30,16 @@ export default function AddPage(props: { lista: string }) {
         especie: 1,
         raca: 1,
         cpf: auth.cpf,
-        sexo: "Masculino"
+        sexo: "Masculino",
+        imagemNome: [""],
+        imagem: [],
+        descricao: ""
 
     })
     const url = 'http://localhost:3002/'
     const navegar = useNavigate()
     const buttonFlex = { justifyContent: 'center', marginTop: "05%", gap: "03%", marginRight: "10%" }
-
+    const formdata = new FormData()
 
     const Redirect = () => {
         navegar("/Login", { replace: true })
@@ -45,12 +49,55 @@ export default function AddPage(props: { lista: string }) {
     LEMBRAR DE COLOCAR TODAS ESSAS FUNÇÕES EM LUGARES SOZINHOS PARA REUTILIZAR
     */
 
+    //Função feita para enviar dados do tipo produto (lida com Imagem)
+    async function EnviarDadosProd() {
+        /* 
+                Trabalhar para funcionar melhor
+                1- ou comprimir
+                2- dividir os envios
+        
+                codigo para enviar dados:
+        */
+        formdata.append("nome", data.nome)
+        formdata.append("valor", data.valor)
+        formdata.append("quantidade", data.quantidade)
+        formdata.append("fornecedor", data.fornecedor)
+        formdata.append("descricao", data.descricao)
+        data.imagem.forEach((file: File, index: number) => {
+            formdata.append(`imagem${index}`, file)
+        })
+        for (let item of formdata.entries()) {
+            console.log(item)
+        }
+        const resposta = await fetch(`${url}Produtos`, {
+            method: "POST", body: formdata
+        })
+            .then((resp) => { return resp.json() })
+            .then((resp) => {
+                // window.location.href = "/Lista"
+                return resp
+            })
+            await POST(`${url}Compras`, JSON.stringify({
+                "preço": parseFloat(data.valor)*parseInt(data.quantidade),
+                "qntd": data.quantidade,
+                "cpf": auth.cpf
+            }),"Lista")
+        
+    }
 
+    //função para enviar dados
     const EnviarData = async () => {
         setData((prevState) => ({ ...prevState, erro: "" }))
-        const resp = await POST(`${url}${props.lista}`, JSON.stringify(data))
-        if (resp && resp.message) {
-            setData((prevState) => ({ ...prevState, erro: "Erro ao conectar com banco de dados" }))
+        if (data.imagem.length === 0) {
+            const resp = await POST(`${url}${props.lista}`, JSON.stringify(data), "Lista")
+            if (resp && resp.message) {
+                setData((prevState) => ({ ...prevState, erro: "Erro ao conectar com banco de dados" }))
+            }
+
+        } else {
+            await EnviarDadosProd()
+
+
         }
     }
 
@@ -72,16 +119,27 @@ export default function AddPage(props: { lista: string }) {
     }
 
     //função que filtra qual a raça que vai ser enviada
-    const filtrarEnvio = (valor) => {
-        const racaID: any = raca.racalist.filter((racauni: any) => { if (racauni.nome === valor) { return racauni.id } })
-        setData((prevState) => ({ ...prevState, raca: racaID[0].id }))
+    const filtrarEnvio = (valor: string) => {
+        if (valor !== "escolher" && valor !== "Adicionar") {
+            const racaID: any = raca.racalist.filter((racauni: any) => { if (racauni.nome === valor) { return racauni.id } })
+            setData((prevState) => ({ ...prevState, raca: racaID[0].id }))
+        }
+
+    }
+
+    //só define se a tabela do começo do retun vai ser aberta ou não
+    const Abrir = (e: any) => {
+        const valor = e.target.selectedOptions[0].value
+        if (valor === "Adicionar") {
+            setShow("Aberto")
+            e.target.value = "escolher"
+        }
     }
 
     //faz a coleta quando o user mudar
     useEffect(() => {
-        if(raca.racalist && raca.racalist[0]){
-            console.log("fui?")
-            setData((prevState)=>({...prevState,raca:raca.racalist[0].id}))
+        if (raca.racalist && raca.racalist[0]) {
+            setData((prevState) => ({ ...prevState, raca: raca.racalist[0].id }))
         }
     }, [raca])
 
@@ -92,11 +150,22 @@ export default function AddPage(props: { lista: string }) {
         }
     }, [data.especie])
 
+    //só adiciona ao state as imagens
+    async function ConfigurarFoto(event: any) {
+
+        const files = [...event.target.files];
+        const filesName = files.map((file) => file.name)
+        console.log(filesName)
+        setData((prev) => ({ ...prev, imagem: [...files] }))
+
+    }
 
 
-    //retorna page de cadastro
+
+    //retorna page de de adição
     return (
         <>
+            <TelaAdd status={show} fechar={setShow} especies={especie} />
             <div className={tamanhoJanela.width >= '1509' ? "ImgBG" : "ImgBGCell"} style={{ backgroundImage: `url(${image})` }} >
                 <div className="Above">
                     <div className="DefaultDiv Formulario">
@@ -111,6 +180,7 @@ export default function AddPage(props: { lista: string }) {
                                 />
                             </div>
                             {props.lista === "Unidades" ?
+                            //se a tabela for para adicionar unidades
                                 <>
                                     <div className="FormBody">
                                         <input type="text" className="form-control custom-input" placeholder="endereço"
@@ -128,7 +198,8 @@ export default function AddPage(props: { lista: string }) {
                                 :
                                 <>
                                     {props.lista === "Produtos" ?
-                                        //parte para quando o formulario for para
+                                    //se for para adicionar produtos
+                                        //parte para quando o formulario for para produtos
                                         <>
                                             <div className="FormBody">
                                                 <input type="number" className="form-control custom-input" placeholder="valor"
@@ -147,6 +218,14 @@ export default function AddPage(props: { lista: string }) {
                                                     required
                                                     onChange={(e) => { setData((prevState) => ({ ...prevState, fornecedor: e.target.value })) }}
                                                 />
+                                            </div>
+                                            <div className="FormBody">
+                                                <textarea rows={4} cols={50} placeholder="Digite seu texto aqui..." required onChange={(e) => { setData((prevState) => ({ ...prevState, descricao: e.target.value })) }} />
+
+                                            </div>
+
+                                            <div className="FormBody">
+                                                <input required type="file" id="file" name="file" multiple accept="image/*" onChange={(e) => { ConfigurarFoto(e) }} />
                                             </div>
                                         </>
                                         :
@@ -170,7 +249,9 @@ export default function AddPage(props: { lista: string }) {
                                                 <div className="col-lg-6 col-md-6 form-group mt-3" key={'racas'}>
                                                     <label>Raça do animal</label>
                                                     <select className="form-control custom-input" name="raca" id="raca"
-                                                        onChange={(e) => { filtrarEnvio(e.target.selectedOptions[0].value) }}>
+                                                        onChange={(e) => { filtrarEnvio(e.target.selectedOptions[0].value) }}
+                                                        onClick={(e) => { Abrir(e) }}>
+                                                        <option key={`choice`} selected value={'escolher'}>Escolher</option>
                                                         {raca.racalist.map((raca, index) => {
                                                             return (
                                                                 <>
@@ -178,6 +259,7 @@ export default function AddPage(props: { lista: string }) {
                                                                 </>
                                                             )
                                                         })}
+                                                        <option key={`add`} value={'Adicionar'}>Adicionar</option>
                                                     </select>
                                                     <div className="validate"></div>
                                                 </div>

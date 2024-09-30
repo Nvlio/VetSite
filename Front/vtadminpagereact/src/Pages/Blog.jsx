@@ -7,6 +7,7 @@ import { Contexto } from "../Contexto";
 export default function BlogPage(props) {
     const {tamanhoJanela} = useContext(Contexto)
 
+    //pagina para todas as noticias do site
     return (
         <>  
         
@@ -23,18 +24,3 @@ export default function BlogPage(props) {
         </>
     )
 }
-
-/*
-style={{
-                    position: 'relative',
-                    backgroundImage: `url(${BGIMG})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: 'cover',
-                    height: '90vh',
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center', // Centraliza o conteúdo verticalmente
-                    justifyContent: 'center' // Centraliza o conteúdo horizontalmente
-                }}
-*/

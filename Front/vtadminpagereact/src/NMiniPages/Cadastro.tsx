@@ -6,14 +6,16 @@ import Mask from '../nFuncoes/Validar.ts';
 
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Cadastro } from '../nFuncoes/POST.ts';
 import UPDATE from '../nFuncoes/UPDATE.ts';
 import { Autenticar, CheckAuteticacao } from '../nFuncoes/auntenticar.js';
 import Inserir from '../nFuncoes/POSTn.ts';
+import { POST } from '../nFuncoes/POST.ts';
+import ConfirmTable from '../NComponentes/Confirmation.tsx';
+import AddProdTable from '../NComponentes/AddProd.tsx';
 
 
 //minipage focada no cadastro
-export default function FormucadastroMini(props: { info: any, lista: string, conta:string }) {
+export default function FormucadastroMini(props: { info: any, lista: string, conta: string }) {
     const { tamanhoJanela } = useContext(Contexto)
     const [estado, setEstado] = useState("ocioso")
     const [user, setUser] = useState('Cliente')
@@ -41,7 +43,9 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
         especie: "",
         sexo: "",
         raca: "",
+        qntdP:props.info?.quantidade
     })
+    const [open, setOpen] = useState(0)
     const url = 'http://localhost:3002/'
     const auth = CheckAuteticacao()
 
@@ -59,22 +63,22 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
     */
 
     const ValidarDados = async (e: any, tipo: string, dado: {} | null) => {
-        let resp: any=true;
+        let resp: any = true;
         let msg: string;
         let valor: string;
         if (e.key === "Fim") {
             console.log("oi")
-            while(resp){
+            while (resp) {
                 resp = await Mask(data.email, "Email")
                 console.log(resp)
                 resp = await Mask(data.tel, "Telefone")
                 resp = await Mask(data.cpf, "CPF")
                 break
             }
-            if(!resp){
+            if (!resp) {
                 setData((prevState) => ({ ...prevState, erro: `Campos Errados` }))
                 return false
-            }else{
+            } else {
                 setData((prevState) => ({ ...prevState, erro: `` }))
                 return true
             }
@@ -114,7 +118,7 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
 
     const EnviarData = async () => {
         if (data.email !== "" && data.senha !== "") {
-            const resposta = await ValidarDados({key:"Fim"}, "all", "")
+            const resposta = await ValidarDados({ key: "Fim" }, "all", "")
             if (!resposta) {
                 return
             } else {
@@ -129,15 +133,15 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
                     especialidade: data.especialidade
                 })
                 const resp = await Inserir(`${url}${user}s`, body)
-                if (resp.msg && resp.msg.message){
+                if (resp.msg && resp.msg.message) {
                     let msg = resp.msg.message
-                    if (msg.substring(0,9)==="Duplicate"){
+                    if (msg.substring(0, 9) === "Duplicate") {
                         msg = "CPF já está sendo utilizado"
                     }
-                    setData((prevState)=>({...prevState,erro:"Email já utilizado"}))
-                }else{
+                    setData((prevState) => ({ ...prevState, erro: "Email já utilizado" }))
+                } else {
                     Autenticar(resp.token)
-                    window.location.href="/"
+                    window.location.href = "/"
                 }
             }
         } else {
@@ -203,15 +207,15 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
                         setData((prevState) => ({ ...prevState, erro: "" }))
                         const listN: Array<object> = []
                         for (let item of resp.msg) {
-                            listN.push({ nome: item['nome'], id: item['id'],especie:item["especie"] })
+                            listN.push({ nome: item['nome'], id: item['id'], especie: item["especie"] })
                         }
-                        setData((prevState)=>({...prevState,raca:listN[0].id}))
+                        setData((prevState) => ({ ...prevState, raca: listN[0].id }))
                         setRacaNome(listN)
                     } catch (e) {
-                        if(data.especie!=""){
+                        if (data.especie != "") {
                             setData((prevState) => ({ ...prevState, erro: "Erro ao conectar com servidor" }))
                         }
-                        
+
                     }
 
                 })
@@ -223,13 +227,28 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
     const EditarData = async () => {
         console.log(props.lista)
         let ident: any;
-        let contaUser :any;
-        if ((props.lista === "Funcionarios" || props.lista === "Clientes")|| (props.conta === "funcionario" || props.conta === "cliente")) {
+        let contaUser: any;
+        if ((props.lista === "Funcionarios" || props.lista === "Clientes") || (props.conta === "funcionario" || props.conta === "cliente")) {
             ident = props.info.cpf
-            contaUser = props.conta==="cliente"?"Clientes":"Funcionarios"
+            contaUser = props.conta === "cliente" ? "Clientes" : "Funcionarios"
         } else {
             contaUser = props.lista
             ident = props.info.id
+        }
+        if (contaUser === "Produtos") {
+            console.log(props.info)
+            const qntdade = parseInt(data.quantidade) - props.info?.quantidade
+            alert("espera")
+            if (qntdade > 0) {
+                await POST(`${url}Compras`, JSON.stringify({
+                    "preço": props.info?.valor * qntdade,
+                    "qntd": qntdade,
+                    "prodId": props.info?.id,
+                    "cpf": auth.cpf,
+                    "qntdTotal": props.info.quantidade
+                }), null)
+            }
+            alert("s")
         }
         console.log(ident)
         await UPDATE(`${url}${contaUser}/${ident}`, props.lista, JSON.stringify({
@@ -249,11 +268,12 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
             quantidade: data.quantidade,
             fornecedor: data.fornecedor
         }))
+
     }
 
-    const filtro = (valor)=>{
-        const racaFiltrada = RacaNome.filter((raca)=>{if(raca.nome===valor){return raca}})
-        setData((prevState) => ({ ...prevState, raca:racaFiltrada[0].id }))
+    const filtro = (valor) => {
+        const racaFiltrada = RacaNome.filter((raca) => { if (raca.nome === valor) { return raca } })
+        setData((prevState) => ({ ...prevState, raca: racaFiltrada[0].id }))
     }
 
     //define o valor inicial do campo como sendo o valor de placeholder
@@ -275,216 +295,222 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
 
     //retorna page de cadastro
     if (props.info !== "") {
+        //se tiver algo no props é  tabela para editar dados PODE SEPARAR EM MAIS COMPONENTES SE QUISER
         if (props.lista === "Clientes" || props.lista === "Funcionarios" || props.lista === "Profile") {
+            //se quem estiver editando for para clientes, funcionario ou for para profile renderiza essa pagina
             return (
-                <><div className={tamanhoJanela.width >= '1509' ? "ImgBG" : "ImgBGCell"} style={{ backgroundImage: `url(${image})` }} >
-                    <div className="Above">
-                        <div className="DefaultDiv Formulario">
-                            <div className="FormTitle"><h1>Editar</h1></div>
-                            <div className='ErroBlock' style={{ display: data.erro !== "" ? 'block' : "none" }}><p>{data.erro}</p></div>
+                <>
 
-                            <form onSubmit={(e) => { e.preventDefault(); EditarData() }}>
-                                <div className="FormBody">
-                                    <input type="text" className="form-control custom-input" placeholder={props.info?.nome}
-                                        onClick={(e) => { BeginState(e, "nome") }}
-                                        onChange={(e) => { setData((prevState) => ({ ...prevState, nome: e.target.value })) }}
+                    <div className={tamanhoJanela.width >= '1509' ? "ImgBG" : "ImgBGCell"} style={{ backgroundImage: `url(${image})` }} >
+                        <div className="Above">
+                            <div className="DefaultDiv Formulario">
+                                <div className="FormTitle"><h1>Editar</h1></div>
+                                <div className='ErroBlock' style={{ display: data.erro !== "" ? 'block' : "none" }}><p>{data.erro}</p></div>
 
-                                    />
-                                </div>
+                                <form onSubmit={(e) => { e.preventDefault(); EditarData() }}>
+                                    <div className="FormBody">
+                                        <input type="text" className="form-control custom-input" placeholder={props.info?.nome}
+                                            onClick={(e) => { BeginState(e, "nome") }}
+                                            onChange={(e) => { setData((prevState) => ({ ...prevState, nome: e.target.value })) }}
 
-
-                                <div className="FormBody">
-                                    <input type="telephone" className="form-control custom-input" placeholder={props.info?.telefone}
-                                        onClick={(e) => { BeginState(e, "tel") }}
-                                        maxLength={11}
-                                        onChange={(e) => { setData((prevState) => ({ ...prevState, tel: e.target.value })) }}
-                                        onKeyDown={(e) => { ValidarDados(e, "tel", data.tel) }}
-                                    />
-                                </div>
-
-                                <div className="FormBody">
-                                    <input type="text" className="form-control custom-input" placeholder={props.info?.email}
-                                        onClick={(e) => { BeginState(e, "email") }}
-                                        onChange={(e) => { setData((prevState) => ({ ...prevState, email: e.target.value })) }}
-                                        onKeyDown={(e) => { ValidarDados(e, "email", data.email) }}
-                                    />
-                                </div>
-
-                                <div style={{ border: "1px solid black", borderRadius: "10px", margin: '02% 03%', padding: "03%" }}>
-                                    <div className="FormBody" style={{ display: "flex", width: '74.5%' }}>
-                                        <input type={password.type} className="form-control custom-input" placeholder={"nova senha"}
-                                            onChange={(e) => { setData((prevState) => ({ ...prevState, senha: e.target.value })) }}
-                                        />
-                                        <img src={password.img} alt='simbolo que visualiza senha' height={'20px'} onClick={() => {
-                                            setPassword(password.type === 'password' ? {
-                                                type: 'text', img: require("../public/simbolos/eyeOpen.png")
-                                            } :
-                                                { type: 'password', img: require('../public/simbolos/eyeClosed.png') })
-                                        }
-                                        } />
-                                    </div>
-
-                                    <div className="FormBody" style={{ width: '69.5%' }}>
-                                        <input type={password.type} className="form-control custom-input" placeholder={"confirme nova senha"}
-                                            onChange={(e) => { setData((prevState) => ({ ...prevState, senha2: e.target.value })) }}
                                         />
                                     </div>
-                                </div>
 
 
-                                {props.lista !== "Clientes" && auth.Conta === "funcionario" ?
-                                    <div style={{ marginLeft: "20%", width: "100%" }}>
-                                        <div className="col-lg-6 col-md-6 form-group mt-3">
-                                            <select className="form-control custom-input" name="unidade" id="unidade"
-                                                onChange={(e) => setData((prevState) => ({ ...prevState, unidade: unit[e.target.selectedIndex] }))}>
-                                                {unitNome.map((unidade, index) => {
-                                                    return (
-                                                        <>
-                                                            <option key={unidade} value={unidade}>{unidade}</option>
-                                                        </>
-                                                    )
-                                                })}
-                                            </select>
-                                            <div className="validate"></div>
+                                    <div className="FormBody">
+                                        <input type="telephone" className="form-control custom-input" placeholder={props.info?.telefone}
+                                            onClick={(e) => { BeginState(e, "tel") }}
+                                            maxLength={11}
+                                            onChange={(e) => { setData((prevState) => ({ ...prevState, tel: e.target.value })) }}
+                                            onKeyDown={(e) => { ValidarDados(e, "tel", data.tel) }}
+                                        />
+                                    </div>
+
+                                    <div className="FormBody">
+                                        <input type="text" className="form-control custom-input" placeholder={props.info?.email}
+                                            onClick={(e) => { BeginState(e, "email") }}
+                                            onChange={(e) => { setData((prevState) => ({ ...prevState, email: e.target.value })) }}
+                                            onKeyDown={(e) => { ValidarDados(e, "email", data.email) }}
+                                        />
+                                    </div>
+
+                                    <div style={{ border: "1px solid black", borderRadius: "10px", margin: '02% 03%', padding: "03%" }}>
+                                        <div className="FormBody" style={{ display: "flex", width: '74.5%' }}>
+                                            <input type={password.type} className="form-control custom-input" placeholder={"nova senha"}
+                                                onChange={(e) => { setData((prevState) => ({ ...prevState, senha: e.target.value })) }}
+                                            />
+                                            <img src={password.img} alt='simbolo que visualiza senha' height={'20px'} onClick={() => {
+                                                setPassword(password.type === 'password' ? {
+                                                    type: 'text', img: require("../public/simbolos/eyeOpen.png")
+                                                } :
+                                                    { type: 'password', img: require('../public/simbolos/eyeClosed.png') })
+                                            }
+                                            } />
                                         </div>
-                                        <div className="col-lg-6 col-md-6 form-group mt-3">
-                                            <select className="form-control custom-input" name="especialidade" id="especialidade"
-                                                onChange={(e) => setData((prevState) => ({ ...prevState, especialidade: e.target.options[e.target.selectedIndex].innerText }))}>
-                                                <option value={especialidade[0]}>{especialidade[0]}</option>
-                                                <option value={especialidade[1]}>{especialidade[1]}</option>
-                                                <option value={especialidade[2]}>{especialidade[2]}</option>
-                                                <option value={especialidade[3]}>{especialidade[3]}</option>
-                                            </select>
-                                            <div className="validate"></div>
-                                        </div>
-                                        <div className="FormBody" style={{ marginLeft: '-10%' }}>
-                                            <input type="text" className="form-control custom-input" placeholder="função"
-                                                onChange={(e) => { setData((prevState) => ({ ...prevState, funcao: e.target.value })) }}
-                                                
+
+                                        <div className="FormBody" style={{ width: '69.5%' }}>
+                                            <input type={password.type} className="form-control custom-input" placeholder={"confirme nova senha"}
+                                                onChange={(e) => { setData((prevState) => ({ ...prevState, senha2: e.target.value })) }}
                                             />
                                         </div>
                                     </div>
-                                    : null}
 
-                                <div className='Flex' style={buttonFlex}>
-                                    <Button type='submit' variant="outline-primary">Editar</Button>
-                                    <Button href='/' variant="outline-warning">Voltar</Button>
-                                </div>
-                            </form>
-                        </div>
-                    </div >
-                </div>
+                                    {/*Se quem estiver editando for funcionario e a tabela de edição não for cliente adiciona mais isso */}
+                                    {props.lista !== "Clientes" && auth.Conta === "funcionario" ?
+                                        <div style={{ marginLeft: "20%", width: "100%" }}>
+                                            <div className="col-lg-6 col-md-6 form-group mt-3">
+                                                <select className="form-control custom-input" name="unidade" id="unidade"
+                                                    onChange={(e) => setData((prevState) => ({ ...prevState, unidade: unit[e.target.selectedIndex] }))}>
+                                                    {unitNome.map((unidade, index) => {
+                                                        return (
+                                                            <>
+                                                                <option key={unidade} value={unidade}>{unidade}</option>
+                                                            </>
+                                                        )
+                                                    })}
+                                                </select>
+                                                <div className="validate"></div>
+                                            </div>
+                                            <div className="col-lg-6 col-md-6 form-group mt-3">
+                                                <select className="form-control custom-input" name="especialidade" id="especialidade"
+                                                    onChange={(e) => setData((prevState) => ({ ...prevState, especialidade: e.target.options[e.target.selectedIndex].innerText }))}>
+                                                    <option value={especialidade[0]}>{especialidade[0]}</option>
+                                                    <option value={especialidade[1]}>{especialidade[1]}</option>
+                                                    <option value={especialidade[2]}>{especialidade[2]}</option>
+                                                    <option value={especialidade[3]}>{especialidade[3]}</option>
+                                                </select>
+                                                <div className="validate"></div>
+                                            </div>
+                                            <div className="FormBody" style={{ marginLeft: '-10%' }}>
+                                                <input type="text" className="form-control custom-input" placeholder="função"
+                                                    onChange={(e) => { setData((prevState) => ({ ...prevState, funcao: e.target.value })) }}
+
+                                                />
+                                            </div>
+                                        </div>
+                                        : null}
+
+                                    <div className='Flex' style={buttonFlex}>
+                                        <Button type='submit' variant="outline-primary">Editar</Button>
+                                        <Button href='/' variant="outline-warning">Voltar</Button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div >
+                    </div>
                 </>
             )
         } else if (props.lista === "Unidades" || props.lista === "Produtos") {
+            //caso a tabela a ser editada for para unidades ou produtos
             return (
-                <><div className={tamanhoJanela.width >= '1509' ? "ImgBG" : "ImgBGCell"} style={{ backgroundImage: `url(${image})` }} >
-                    <div className="Above">
-                        <div className="DefaultDiv Formulario">
-                            <div className="FormTitle"><h1>Editar</h1></div>
-                            <div className='ErroBlock' style={{ display: data.erro !== "" ? 'block' : "none" }}><p>{data.erro}</p></div>
+                <>
+                    <div style={open === 1 ? { display: "block", marginLeft: "17%", marginTop: "17.16%" } : { display: "none" }}><AddProdTable prodInfo={setData} isOpen={setOpen} qnt={data.qntdP} /></div>
+                    <div className={tamanhoJanela.width >= '1509' ? "ImgBG" : "ImgBGCell"} style={{ backgroundImage: `url(${image})` }} >
+                        <div className="Above">
+                            <div className="DefaultDiv Formulario">
+                                <div className="FormTitle"><h1>Editar</h1></div>
+                                <div className='ErroBlock' style={{ display: data.erro !== "" ? 'block' : "none" }}><p>{data.erro}</p></div>
 
-                            <form onSubmit={(e) => { e.preventDefault(); EditarData() }}>
-                                <div className="FormBody">
-                                    <p className='form'>Nome</p>
-                                    <input type="text" className="form-control custom-input" placeholder={props.info?.nome}
-                                        onClick={(e) => { BeginState(e, "nome") }}
-                                        onChange={(e) => { setData((prevState) => ({ ...prevState, nome: e.target.value })) }}
-                                       
-                                    />
-                                </div>
-                                {props.lista === "Unidades" ?
-                                    <>
-                                        <div className="FormBody">
-                                            <p className='form'>Endereço</p>
-                                            <input type="text" className="form-control custom-input" placeholder={props.info?.endereco}
-                                                onClick={(e) => { BeginState(e, "nome") }}
-                                                onChange={(e) => { setData((prevState) => ({ ...prevState, endereco: e.target.value })) }}
+                                <form onSubmit={(e) => { e.preventDefault() }}>
+                                    <div className="FormBody">
+                                        <p className='form'>Nome</p>
+                                        <input type="text" className="form-control custom-input" placeholder={props.info?.nome}
+                                            onClick={(e) => { BeginState(e, "nome") }}
+                                            onChange={(e) => { setData((prevState) => ({ ...prevState, nome: e.target.value })) }}
 
-                                            />
-                                        </div>
-                                        <div className="FormBody">
-                                            <p className='form'>Telefone</p>
-                                            <input type="text" className="form-control custom-input" placeholder={props.info?.telefone}
-                                                onClick={(e) => { BeginState(e, "nome") }}
-                                                maxLength={11}
-                                                onChange={(e) => { setData((prevState) => ({ ...prevState, tel: e.target.value })) }}
-                                                onKeyDown={(e) => { ValidarDados(e, "tel", data.tel)}}
-                                            />
-                                        </div>
-                                    </>
-                                    :
-                                    <>
-                                        <div className="FormBody">
-                                            <p className='form'>Valor</p>
-                                            <input type="number" className="form-control custom-input" placeholder={props.info?.valor}
-                                                onClick={(e) => { BeginState(e, "nome") }}
-                                                onChange={(e) => { setData((prevState) => ({ ...prevState, valor: e.target.value })) }}
-                                                
-                                            />
-                                        </div>
-                                        <div className="FormBody">
-                                            <p className='form'>Quantidade</p>
-                                            <input type="number" className="form-control custom-input" placeholder={props.info?.quantidade}
-                                                onClick={(e) => { BeginState(e, "nome") }}
-                                                onChange={(e) => { setData((prevState) => ({ ...prevState, quantidade: e.target.value })) }}
-
-                                            />
-                                        </div>
-                                        <div className="FormBody">
-                                            <p className='form'>Fornecedor</p>
-                                            <input type="text" className="form-control custom-input" placeholder={props.info?.fornecedor}
-                                                onClick={(e) => { BeginState(e, "nome") }}
-                                                onChange={(e) => { setData((prevState) => ({ ...prevState, fornecedor: e.target.value })) }}
-
-                                            />
-                                        </div>
-
-                                    </>
-                                }
-
-                                {props.lista === "Funcionarios" && (
-                                    <div style={{ marginLeft: "20%", width: "100%" }}>
-                                        <div className="col-lg-6 col-md-6 form-group mt-3">
-                                            <select className="form-control custom-input" name="unidade" id="unidade"
-                                                onChange={(e) => setData((prevState) => ({ ...prevState, unidade: unit[e.target.selectedIndex] }))}>
-                                                {unitNome.map((unidade, index) => {
-                                                    return (
-                                                        <>
-                                                            <option key={unidade} value={unidade}>{unidade}</option>
-                                                        </>
-                                                    )
-                                                })}
-                                            </select>
-                                            <div className="validate"></div>
-                                        </div>
-                                        <div className="col-lg-6 col-md-6 form-group mt-3">
-                                            <select className="form-control custom-input" name="especialidade" id="especialidade"
-                                                onChange={(e) => setData((prevState) => ({ ...prevState, especialidade: e.target.options[e.target.selectedIndex].innerText }))}>
-                                                <option value={especialidade[0]}>{especialidade[0]}</option>
-                                                <option value={especialidade[1]}>{especialidade[1]}</option>
-                                                <option value={especialidade[2]}>{especialidade[2]}</option>
-                                                <option value={especialidade[3]}>{especialidade[3]}</option>
-                                            </select>
-                                            <div className="validate"></div>
-                                        </div>
-                                        <div className="FormBody" style={{ marginLeft: '-10%' }}>
-                                            <input type="text" className="form-control custom-input" placeholder="função"
-                                                onChange={(e) => { setData((prevState) => ({ ...prevState, funcao: e.target.value })) }}
-
-                                            />
-                                        </div>
+                                        />
                                     </div>
-                                )}
+                                    {props.lista === "Unidades" ?
+                                    //se for unidade
+                                        <>
+                                            <div className="FormBody">
+                                                <p className='form'>Endereço</p>
+                                                <input type="text" className="form-control custom-input" placeholder={props.info?.endereco}
+                                                    onClick={(e) => { BeginState(e, "nome") }}
+                                                    onChange={(e) => { setData((prevState) => ({ ...prevState, endereco: e.target.value })) }}
 
-                                <div className='Flex' style={buttonFlex}>
-                                    <Button type='submit' variant="outline-primary">Editar</Button>
-                                    <Button href='/' variant="outline-warning">Voltar</Button>
-                                </div>
-                            </form>
-                        </div>
-                    </div >
-                </div>
+                                                />
+                                            </div>
+                                            <div className="FormBody">
+                                                <p className='form'>Telefone</p>
+                                                <input type="text" className="form-control custom-input" placeholder={props.info?.telefone}
+                                                    onClick={(e) => { BeginState(e, "nome") }}
+                                                    maxLength={11}
+                                                    onChange={(e) => { setData((prevState) => ({ ...prevState, tel: e.target.value })) }}
+                                                    onKeyDown={(e) => { ValidarDados(e, "tel", data.tel) }}
+                                                />
+                                            </div>
+                                        </>
+                                        :
+                                        //se for produtos
+                                        <>
+                                            <div className="FormBody">
+                                                <p className='form'>Valor</p>
+                                                <input type="number" className="form-control custom-input" placeholder={props.info?.valor}
+                                                    onClick={(e) => { BeginState(e, "nome") }}
+                                                    onChange={(e) => { setData((prevState) => ({ ...prevState, valor: e.target.value })) }}
+
+                                                />
+                                            </div>
+                                            <div className="FormBody">
+                                                <p className='form'>Quantidade</p>
+                                                <button onClick={() => (setOpen(1))}>Adicionar</button>
+                                            </div>
+                                            <div className="FormBody">
+                                                <p className='form'>Fornecedor</p>
+                                                <input type="text" className="form-control custom-input" placeholder={props.info?.fornecedor}
+                                                    onClick={(e) => { BeginState(e, "nome") }}
+                                                    onChange={(e) => { setData((prevState) => ({ ...prevState, fornecedor: e.target.value })) }}
+
+                                                />
+                                            </div>
+
+                                        </>
+                                    }
+
+                                    {props.lista === "Funcionarios" && (
+                                        //ACHO QUE PODE TIRAR VEIO EM ALGUM ERRO MAS COMO SÓ ESTOU COMENTANDO NÃO VOU ENCOSTAR PARA N DAR ERRO
+                                        <div style={{ marginLeft: "20%", width: "100%" }}>
+                                            <div className="col-lg-6 col-md-6 form-group mt-3">
+                                                <select className="form-control custom-input" name="unidade" id="unidade"
+                                                    onChange={(e) => setData((prevState) => ({ ...prevState, unidade: unit[e.target.selectedIndex] }))}>
+                                                    {unitNome.map((unidade, index) => {
+                                                        return (
+                                                            <>
+                                                                <option key={unidade} value={unidade}>{unidade}</option>
+                                                            </>
+                                                        )
+                                                    })}
+                                                </select>
+                                                <div className="validate"></div>
+                                            </div>
+                                            <div className="col-lg-6 col-md-6 form-group mt-3">
+                                                <select className="form-control custom-input" name="especialidade" id="especialidade"
+                                                    onChange={(e) => setData((prevState) => ({ ...prevState, especialidade: e.target.options[e.target.selectedIndex].innerText }))}>
+                                                    <option value={especialidade[0]}>{especialidade[0]}</option>
+                                                    <option value={especialidade[1]}>{especialidade[1]}</option>
+                                                    <option value={especialidade[2]}>{especialidade[2]}</option>
+                                                    <option value={especialidade[3]}>{especialidade[3]}</option>
+                                                </select>
+                                                <div className="validate"></div>
+                                            </div>
+                                            <div className="FormBody" style={{ marginLeft: '-10%' }}>
+                                                <input type="text" className="form-control custom-input" placeholder="função"
+                                                    onChange={(e) => { setData((prevState) => ({ ...prevState, funcao: e.target.value })) }}
+
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className='Flex' style={buttonFlex}>
+                                        <Button onClick={() => { EditarData() }} type='submit' variant="outline-primary">Editar</Button>
+                                        <Button href='/' variant="outline-warning">Voltar</Button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div >
+                    </div>
                 </>
             )
         } else {
@@ -506,19 +532,19 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
                                         key={"nomeEditar"} />
                                 </div>
 
-                                <select className="form-control custom-input form" name="especie" id="especie" 
+                                <select className="form-control custom-input form" name="especie" id="especie"
                                     onChange={(e) => setData((prevState) => ({ ...prevState, especie: EspecieNome[e.target.selectedIndex]["id"] }))}>
-                                    {EspecieNome.map((especie: object,index:number) => {
+                                    {EspecieNome.map((especie: object, index: number) => {
                                         return (
                                             <>
-                                                <option key={especie[`nome${index+index*index}`]} value={especie['nome']}>{especie['nome']}</option>
+                                                <option key={especie[`nome${index + index * index}`]} value={especie['nome']}>{especie['nome']}</option>
                                             </>
                                         )
                                     })}
                                 </select>
 
-                                <select className="form-control custom-input form" name="raca" id="raca" 
-                                    onChange={(e) => {filtro(e.target.selectedOptions[0].value)}}>
+                                <select className="form-control custom-input form" name="raca" id="raca"
+                                    onChange={(e) => { filtro(e.target.selectedOptions[0].value) }}>
                                     {RacaNome.map((raca: object) => {
                                         return (
                                             <>
@@ -543,6 +569,7 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
             )
         }
     } else {
+        //Se não tiver nada em props é pagina para realizar cadastro
         return (
             <><div className={tamanhoJanela.width >= '1509' ? "ImgBG" : "ImgBGCell"} style={{ backgroundImage: `url(${image})` }} >
                 <div className="Above">
@@ -605,7 +632,8 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
                                     />
                                 </div>
                             </div>
-
+                            
+                            {/*Se user for funcionario adiciona mais esses campos para informar*/}
                             {user === "Funcionário" && (
                                 <div style={{ marginLeft: "20%", width: "100%" }}>
                                     <div className="col-lg-6 col-md-6 form-group mt-3">
@@ -634,7 +662,7 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
                                     <div className="FormBody" style={{ marginLeft: '-10%' }}>
                                         <input type="text" className="form-control custom-input" placeholder="função" required
                                             onChange={(e) => { setData((prevState) => ({ ...prevState, funcao: e.target.value })) }}
-                                            
+
                                         />
                                     </div>
                                 </div>

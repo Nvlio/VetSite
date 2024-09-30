@@ -19,7 +19,7 @@ export default function ListaMainPage() {
         }
     }, [])
 
-    //se o usuario for funcionario, então a lista vai conter mais paginas que podem ser vistas por ele
+    //se o usuario seja funcionario, então a lista vai conter mais paginas que podem ser vistas por ele
     if (auth?.Conta === "funcionario") {
         return (
             <div className={tamanhoJanela.width >= '1509' ? "ImgBG" : "ImgBGCell"} style={{ backgroundImage: `url(${img})`, marginTop:"05%"}} >
@@ -39,7 +39,7 @@ export default function ListaMainPage() {
             </div>
         )
     } 
-    //caso o usuario for clientes, então só mostra uma lista basica de paciente (o unico que o cliente pode ver)
+    //caso o usuario seja clientes, então só mostra uma lista basica de paciente (o unico que o cliente pode ver)
     else if (auth.Conta === "cliente") {
         return (
             <div className={tamanhoJanela.width >= '1509' ? "ImgBG" : "ImgBGCell"} style={{ backgroundImage: `url(${img})` }} >

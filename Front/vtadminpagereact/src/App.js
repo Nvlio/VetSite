@@ -1,17 +1,11 @@
 
 import React from 'react';
-import Main from './Pages/MainPage';
 import {BrowserRouter,Routes,Route} from "react-router-dom"
 import './App.css';
-import Formulario from './Pages/FormPage';
-import Lista from './Pages/ListPage';
 import ErroPage from './Pages/Erro';
-import FormAdicionar from './Pages/AddFormPage';
 import BlogPage from './Pages/Blog';
 import AddNotiPage from './Pages/AddNoticia';
 import NewsPage from './Pages/Noticia';
-import { AnimalForm } from './Componentes/Form';
-import ProfilePage from './Pages/Profile';
 import Home from './NPages/Home.jsx';
 
 
@@ -37,9 +31,13 @@ import Login from "../src/NPages/Formulario.tsx"
 import FormPage from './NPages/Formulario.tsx';
 import ProfileMain from './NPages/Profile.tsx';
 import ListaMainPage from './NPages/Lista.tsx';
+import ProduPage from './NPages/Prod.tsx';
+import ProdPage from './NPages/SingleProd.jsx';
+import ComprarPage from './NPages/Comprar.jsx';
 
 function App() {
   return (
+    //rotas de todas as paginas
     <div className="App">
       <BrowserRouter>
       <Routes>
@@ -47,14 +45,14 @@ function App() {
         <Route path='/Login' element={<FormPage tipo={1}/>}/>
         <Route path='/Cadastro' element={<FormPage tipo={2}/>}/>
         <Route path='/Adicionar' element={<FormPage tipo={3}/>}/>
+        <Route path='/Comprar/:id' element={<ComprarPage/>}/>
+        <Route path='/Produtos' element={<ProduPage/>}/>
+        <Route path='/Produto' element={<ProdPage/>}/>
         <Route path='/Editar' element={<FormPage tipo={4}/>}/>
         <Route path='/Profile' element={<ProfileMain/>}/>
         <Route path='/Lista' element = {<ListaMainPage/>}/>
-        <Route path='/List' element={<Lista/>}/>
-        <Route path='/AddForm' element={<FormAdicionar/>} />
         <Route path="/Blog" element={<BlogPage/>}/>
         <Route path="/AddNoticia" element={<AddNotiPage/>}/>
-        <Route path="/Animal" element={<AnimalForm/>}/>
         <Route path='/News' element={<NewsPage/>}/>
         <Route path='/*' element={<ErroPage/>}/>
       </Routes>

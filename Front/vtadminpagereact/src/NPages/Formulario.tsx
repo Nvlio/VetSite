@@ -43,10 +43,11 @@ export default function FormPage(props: { tipo: number }) {
             </LayoutMain>
         )
     } 
+    //caso 3 é pagina para adicionar
     else if (props.tipo === 3){
         return <AddPage lista={lista}/>
     }
-    //caso não seja nenhum dos 2 tipos então estrutura uma pagina de atualização.
+    //caso não seja nenhum dos 3 tipos então estrutura uma pagina de atualização (informações nos props fazem o componente entender que é atualização).
     else {
         return (
             <LayoutMain>

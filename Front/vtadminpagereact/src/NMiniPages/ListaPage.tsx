@@ -78,7 +78,10 @@ export default function ListaPage(props: { Lista: string }) {
     useEffect(() => {
         setErro("")
         Coletar()
+        console.log(datas)
     }, [props.Lista])
+
+
 
     //se após a coleta resultar em datas não undefined, ele forma a lista da pagina lista
     if (datas) {
@@ -90,6 +93,7 @@ export default function ListaPage(props: { Lista: string }) {
 
                     <h1>{props.Lista}</h1>
                     {(props.Lista !== "Clientes" && props.Lista !== "Funcionarios" && props.Lista !== "Pacientes") || (props.Lista === "Pacientes" && auth.Conta === "cliente") ?
+                        //Um if bem especifico só olhar ai não é tão dificil é só pra dizer se vai permitir o usuario adicionar ou não
                         <>
                             <LinkContainer style={{ marginBottom: "01%" }} to="/Adicionar" state={{ lista: props.Lista }}>
                                 <Button >Adicionar</Button>
@@ -102,16 +106,19 @@ export default function ListaPage(props: { Lista: string }) {
                     </div>
                     <br />
                     {(auth.Conta === "funcionario") && props.Lista !== "Clientes" ?
+                    //se o usuario for funcionario e a tabela não for cliente
                         <>
                             <button style={{ marginRight: "2%" }} onClick={(e) => { OpenFilter(e) }}>Mais</button>
                             <div ref={FiltroPlus} style={{ display: "none" }}>
                                 <div style={{ display: 'flex', justifyContent: "center", width: "100%", marginTop: "10px", gap: '10px' }}>
                                     {props.Lista !== "Funcionarios" && props.Lista !== "Pacientes" ?
+                                    //se n for funcionario e n for pacientes
                                         <input type="text" style={{ width: "30%" }} placeholder={props.Lista === "Produtos" ? "fornecedor" : "endereço"} onChange={(e) => { setFiltro((prevState) => ({ ...prevState, Cara1: e.target.value === "" ? "_" : e.target.value })) }} />
                                         :
                                         <>{props.Lista === 'Pacientes' ? <input type="text" style={{ width: "30%" }} placeholder={"Dono"} onChange={(e) => { setFiltro((prevState) => ({ ...prevState, Cara1: e.target.value === "" ? "_" : e.target.value })) }} /> : null}</>
                                     }
                                     {props.Lista === "Funcionarios" ?
+                                    //se for para funcionario isso é só pra dizer o que vai ter no botão mais de pesquisar
                                         <>
                                             <input type="text" style={{ width: "30%" }} placeholder="especialidade" onChange={(e) => { setFiltro((prevState) => ({ ...prevState, Cara1: e.target.value === "" ? "_" : e.target.value })) }} />
                                             <input type="text" style={{ width: "30%" }} placeholder="função" onChange={(e) => { setFiltro((prevState) => ({ ...prevState, Cara2: e.target.value === "" ? "_" : e.target.value })) }} />
@@ -128,12 +135,14 @@ export default function ListaPage(props: { Lista: string }) {
                     <hr />
                     <div className='ErroBlock' style={{ display: erro !== "" ? 'block' : "none" }}><p>{erro}</p></div>
                     {datas.length >= 1 ?
+                    //se tiver muita coisa na lista ele cria uma tabela que pode mover mais do que a tela permite
                         <div style={{ overflowX: "auto", overflowY: "auto", height: "450px" }}>
                             <table>
                                 <thead>
                                     <tr>
                                         {chave?.map((item) => {
-                                            if (item !== "id" && item !== "id_dono" && item !== "senha" && item !== "validade") {
+                                            //AQUI FICA AS CHAVES DA LISTA 
+                                            if (item !== "id" && item !== "id_dono" && item !== "senha" && item !== "validade" && item !=="img") {
                                                 return (
                                                     <th style={{ border: "1px solid black", padding: "1px", width: "30%" }}>
                                                         {item}
@@ -150,6 +159,7 @@ export default function ListaPage(props: { Lista: string }) {
                                 <tbody>
 
                                     {datas.map((data) => {
+                                        //AQUI FICA AS INFORMAÇÕES DA LISTA
                                         if (props.Lista === "Pacientes") {
                                             return (
                                                 <tr >
@@ -250,8 +260,11 @@ export default function ListaPage(props: { Lista: string }) {
                                                         {data.fornecedor}
                                                     </td>
                                                     <td style={{ border: "1px solid black" }}>
+                                                        {data.descricao}
+                                                    </td>
+                                                    <td style={{ border: "1px solid black" }}>
                                                         <LinkContainer style={{ width: "100%", backgroundColor: "blue", color: "white" }} to="/Editar" state={{ dados: data, lista: props.Lista }}><button >Editar</button></LinkContainer>
-                                                        <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState)=>({...prevState,aberto:true,id:data.id})) }}>Excluir</button>
+                                                        {props.Lista!=="Produtos"?<button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState)=>({...prevState,aberto:true,id:data.id})) }}>Excluir</button>:null}
                                                     </td>
                                                 </tr>
                                             )

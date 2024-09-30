@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { cpfValidator } from 'cpf-validator-ianan';
 import { Autenticar, CheckAuteticacao } from '../nFuncoes/auntenticar.js';
-import NavMenu from './nav';
 import '../CSS/Crescer.css'; // Importando o CSS
 
 export function AddFormComponente(props) {

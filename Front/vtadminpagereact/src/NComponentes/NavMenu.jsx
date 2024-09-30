@@ -104,6 +104,7 @@ export default function NavMenuBarComp(props) {
                         <li><a className="nav-link scrollto" href="/gallery">Depoimento</a></li>
                         <li><a className="nav-link scrollto" href="/contact">Contato</a></li>
                         <li><a className="nav-link scrollto" href="/Blog">Blog</a></li>
+                        <li><a className="nav-link scrollto" href="/Produtos">Produtos</a></li>
                         {auth ?
                             <>
                                 <li><a className="nav-link scrollto" href="Profile">Conta</a></li>
@@ -124,10 +125,14 @@ export default function NavMenuBarComp(props) {
             <div className="Menu">
                 <div id="topbar" className="d-flex align-items-center fixed-top">
                     <div className="container d-flex justify-content-center justify-content-md-between">
-                        <div className="contact-info d-flex align-items-center" style={{ width: "40%" }}>
-                            <i className="bi bi-phone d-flex align-items-center"><span>+55 (19) 3395-0058</span></i>
-                            <i className="bi bi-clock d-flex align-items-center ms-4"><span> Atendimento 24H</span></i>
-                        </div>
+                        {props.extra ?
+                            null
+                            :
+                            <div className="contact-info d-flex align-items-center" style={{ width: "40%" }}>
+                                <i className="bi bi-phone d-flex align-items-center"><span>+55 (19) 3395-0058</span></i>
+                                <i className="bi bi-clock d-flex align-items-center ms-4"><span> Atendimento 24H</span></i>
+                            </div>
+                        }
                         <div style={{ width: "50%" }} />
                         <div className="languages d-none d-md-flex align-items-center">
                             <ul>
@@ -194,6 +199,7 @@ export default function NavMenuBarComp(props) {
                                 <li><a className="nav-link scrollto" href="/gallery">Depoimento</a></li>
                                 <li><a className="nav-link scrollto" href="/contact">Contato</a></li>
                                 <li><a className="nav-link scrollto" href="/Blog">Blog</a></li>
+                                <li><a className="nav-link scrollto" href="/Produtos">Produtos</a></li>
                                 {auth ?
                                     <>
                                         <li><a className="nav-link scrollto" href="Profile">Conta</a></li>
