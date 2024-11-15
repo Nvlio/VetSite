@@ -34,6 +34,7 @@ import ListaMainPage from './NPages/Lista.tsx';
 import ProduPage from './NPages/Prod.tsx';
 import ProdPage from './NPages/SingleProd.jsx';
 import ComprarPage from './NPages/Comprar.jsx';
+import ContasPage from './Pages/pages/Contas.tsx';
 
 function App() {
   return (
@@ -53,7 +54,7 @@ function App() {
         <Route path='/Profile' element={<ProfileMain/>}/>
         <Route path='/Lista' element = {<ListaMainPage/>}/>
         <Route path="/Blog" element={<BlogPage/>}/>
-        <Route path="/Contas" element={<BlogPage/>}/>
+        <Route path="/Contas" element={<ContasPage  />}/>
         <Route path="/AddNoticia" element={<AddNotiPage/>}/>
         <Route path='/News' element={<NewsPage/>}/>
         <Route path='/*' element={<ErroPage/>}/>
