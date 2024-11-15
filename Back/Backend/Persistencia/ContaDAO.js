@@ -4,12 +4,12 @@ import ContaMod from "../Modelo/ContaModelo.js"
 export default class ContaDB {
     async GET(conexao) {
         try {
-            const sqlCode = "SELECT contas.id AS id,contas.Nome AS nome,funcionario.nome AS nomeResp,contas.valor,contas.data_vencimento,contas.data_inicio,contas.status FROM contas INNER JOIN funcionario ON funcionario.CPF=contas.responsavel"
+            const sqlCode = "SELECT contas.id AS id,contas.Nome AS nome,funcionario.nome AS nomeResp,contas.valor,contas.data_vencimento,contas.data_inicio,contas.status,contas.tipo,contas.mensal FROM contas INNER JOIN funcionario ON funcionario.CPF=contas.responsavel"
             const [itens] = await conexao.query(sqlCode)
             const lista = []
 
             for (let item of itens) {
-                let modelo = new ContaMod(item.nome,item.data_vencimento,item.data_inicio,item.valor,item.responsavel,item.status,item.id)
+                let modelo = new ContaMod(item.nome,item.data_vencimento,item.data_inicio,item.valor,item.responsavel,item.status,item.tipo,item.mensal,item.id)
                 lista.push(modelo.ToJSON(item.nomeResp))
             }
 
@@ -19,13 +19,13 @@ export default class ContaDB {
         }
     }
 
-    async GETVAL(conexao, nome,extra) {
+    async GETVAL(conexao, tipoConta,extra) {
         try {
             let sqlCode = "SELECT contas.id AS id,contas.Nome AS nome,funcionario.nome AS nomeResp,contas.valor,contas.data_vencimento,contas.data_inicio,contas.status FROM contas INNER JOIN funcionario ON funcionario.CPF=contas.responsavel"
             const values = [];
             let conector = " WHERE "
-            if (nome != "_") {
-                sqlCode += `${conector}funcionario.Nome LIKE ? `
+            if (tipoConta != "_") {
+                sqlCode += `${conector}contas.tipo LIKE ? `
                 values.push(`${nome}%`)
                 conector = "AND "
             }
@@ -39,6 +39,22 @@ export default class ContaDB {
                 values.push(extra[1])
                 conector = "AND "
             }
+            if (extra[2] != "_") {
+                sqlCode += `${conector}funcionario.Nome LIKE ? `
+                values.push(extra[2])
+                conector = "AND "
+            }
+            if (extra[3] != "_") {
+                sqlCode += `${conector}contas.valor = ? `
+                values.push(extra[3])
+                conector = "AND "
+            }
+            if (extra[4] != "_") {
+                sqlCode += `${conector}ORDER BY contas.data_vencimento ASC`
+                values.push(extra[4])
+                conector = "AND "
+            }
+
             const [itens] = await conexao.query(sqlCode, values)
             let modelo = []
 
