@@ -9,7 +9,7 @@ export default class ContaDB {
             const lista = []
 
             for (let item of itens) {
-                let modelo = new ContaMod(item.nome,item.data_vencimento,item.data_inicio,item.valor,item.responsavel,item.status,item.tipo,item.mensal,item.id)
+                let modelo = new ContaMod(item.nome, item.data_vencimento, item.data_inicio, item.valor, item.responsavel, item.status, item.tipo, item.mensal, item.id)
                 lista.push(modelo.ToJSON(item.nomeResp))
             }
 
@@ -19,14 +19,14 @@ export default class ContaDB {
         }
     }
 
-    async GETVAL(conexao, tipoConta,extra) {
+    async GETVAL(conexao, tipoConta, extra) {
         try {
             let sqlCode = "SELECT contas.id AS id,contas.Nome AS nome,funcionario.nome AS nomeResp,contas.valor,contas.data_vencimento,contas.data_inicio,contas.status FROM contas INNER JOIN funcionario ON funcionario.CPF=contas.responsavel"
             const values = [];
             let conector = " WHERE "
             if (tipoConta != "_") {
                 sqlCode += `${conector}contas.tipo LIKE ? `
-                values.push(`${nome}%`)
+                values.push(`${tipoConta}%`)
                 conector = "AND "
             }
             if (extra[0] != "_") {
@@ -44,22 +44,26 @@ export default class ContaDB {
                 values.push(extra[2])
                 conector = "AND "
             }
-            if (extra[3] != "_") {
-                sqlCode += `${conector}contas.valor = ? `
-                values.push(extra[3])
-                conector = "AND "
+            if (extra[3] != "_" && extra[4] != "_") {
+                sqlCode += "ORDER BY "
+                sqlCode += extra[3] === "caro" ? `contas.valor DESC` : `contas.valor ASC`
+                sqlCode +=", "
+                sqlCode += extra[4] === "Perto" ? `contas.data_vencimento ASC` : `contas.data_vencimento DESC`
+            } else {
+                if (extra[3] != "_") {
+                    sqlCode += extra[3] === "caro" ? ` ORDER BY contas.valor DESC ` : ` ORDER BY contas.valor ASC `
+                }
+                if (extra[4] != "_") {
+                    sqlCode += extra[4] === "Perto" ? ` ORDER BY contas.data_vencimento ASC` : ` ORDER BY contas.data_vencimento DESC`
+                }
             }
-            if (extra[4] != "_") {
-                sqlCode += `${conector}ORDER BY contas.data_vencimento ASC`
-                values.push(extra[4])
-                conector = "AND "
-            }
+
 
             const [itens] = await conexao.query(sqlCode, values)
             let modelo = []
 
             for (let item of itens) {
-                const unidade = new ContaMod(item.nome,item.data_vencimento,item.data_inicio,item.valor,item.responsavel,item.status,item.id)
+                const unidade = new ContaMod(item.nome, item.data_vencimento, item.data_inicio, item.valor, item.responsavel, item.status, item.id)
                 modelo.push(unidade.ToJSON(item.nomeResp))
             }
 
@@ -73,7 +77,7 @@ export default class ContaDB {
     async POST(conexao, dataV, dataI, valor, nome, cpfresp, status) {
         try {
             const sqlCode = "INSERT INTO contas (id,nome,data_vencimento,data_inicio,valor,responsavel,status) VALUES (NULL,?,?,?,?,?,?)"
-            const values = [nome,dataV,dataI,valor,cpfresp,status]
+            const values = [nome, dataV, dataI, valor, cpfresp, status]
             await conexao.query(sqlCode, values)
             return ({ status: 200, msg: "conta Inserida" })
         } catch (e) {
