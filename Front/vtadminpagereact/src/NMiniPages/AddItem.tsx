@@ -26,7 +26,7 @@ export default function AddPage(props: { lista: string }) {
         telefone: "",
         valor: "",
         fornecedor: "",
-        quantidade: "",
+        quantidade: "0",
         especie: 1,
         raca: 1,
         cpf: auth.cpf,
@@ -77,12 +77,7 @@ export default function AddPage(props: { lista: string }) {
                 // window.location.href = "/Lista"
                 return resp
             })
-            await POST(`${url}Compras`, JSON.stringify({
-                "preço": parseFloat(data.valor)*parseInt(data.quantidade),
-                "qntd": data.quantidade,
-                "cpf": auth.cpf
-            }),"Lista")
-        
+
     }
 
     //função para enviar dados
@@ -96,6 +91,7 @@ export default function AddPage(props: { lista: string }) {
 
         } else {
             await EnviarDadosProd()
+            window.location.replace("/Lista")
 
 
         }
@@ -180,7 +176,7 @@ export default function AddPage(props: { lista: string }) {
                                 />
                             </div>
                             {props.lista === "Unidades" ?
-                            //se a tabela for para adicionar unidades
+                                //se a tabela for para adicionar unidades
                                 <>
                                     <div className="FormBody">
                                         <input type="text" className="form-control custom-input" placeholder="endereço"
@@ -198,7 +194,7 @@ export default function AddPage(props: { lista: string }) {
                                 :
                                 <>
                                     {props.lista === "Produtos" ?
-                                    //se for para adicionar produtos
+                                        //se for para adicionar produtos
                                         //parte para quando o formulario for para produtos
                                         <>
                                             <div className="FormBody">
@@ -207,12 +203,7 @@ export default function AddPage(props: { lista: string }) {
                                                     onChange={(e) => { setData((prevState) => ({ ...prevState, valor: e.target.value })) }}
                                                 />
                                             </div>
-                                            <div className="FormBody">
-                                                <input type="number" className="form-control custom-input" placeholder="quantidade"
-                                                    required
-                                                    onChange={(e) => { setData((prevState) => ({ ...prevState, quantidade: e.target.value })) }}
-                                                />
-                                            </div>
+
                                             <div className="FormBody">
                                                 <input type="text" className="form-control custom-input" placeholder="fornecenedor"
                                                     required

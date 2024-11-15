@@ -9,18 +9,18 @@ import { Prev } from "react-bootstrap/esm/PageItem";
 
 
 export default function ListaPage(props: { Lista: string }) {
-    const [datas, setDatas]:any = useState({})
-    const [chave, setChave]:any = useState()
-    const FiltroPlus:any = useRef()
-    const [exclusao, setExclusao] = useState({ aberto: false, excluir: false, id:"" })
+    const [datas, setDatas]: any = useState({})
+    const [chave, setChave]: any = useState()
+    const FiltroPlus: any = useRef()
+    const [exclusao, setExclusao] = useState({ aberto: false, excluir: false, id: "" })
     const [erro, setErro] = useState("")
     const [filtro, setFiltro] = useState({ nomeItem: "_", Cara1: "_", Cara2: "_", Cara3: "_" })
-    const auth:any = CheckAuteticacao()
+    const auth: any = CheckAuteticacao()
 
     //função que faz a coleta de todos os dados da lista especifica pedida
     const Coletar = async () => {
         const dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : ""}`)
-        
+        console.log(dados)
         if (dados && !dados.resp && !dados.message && !dados.msg) {
             setDatas(dados)
             if (dados.length > 0) {
@@ -35,7 +35,11 @@ export default function ListaPage(props: { Lista: string }) {
         let dados: any
         if (props.Lista === "Pacientes") {
             dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Pacientes" && auth.Conta === "cliente" ? auth.cpf : "_"}/${filtro.nomeItem}${auth.Conta === "funcionario" ? `/${filtro.Cara1}` : ""}`)
-        } else {
+        } else if (props.Lista === "Compras" || props.Lista === "Vendas") {
+            console.log(filtro.nomeItem)
+            dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Compras" ? filtro.nomeItem : filtro.nomeItem}/${filtro.Cara1}`)
+        }
+        else {
             dados = await GET(`http://localhost:3002/${props.Lista}/${props.Lista === "Funcionarios" ? `${filtro.nomeItem}-${filtro.Cara1}-${filtro.Cara2}-${filtro.Cara3}` : `${filtro.nomeItem}-${filtro.Cara1}`}`)
         }
         setDatas(dados.msg ? dados.msg : dados)
@@ -45,18 +49,17 @@ export default function ListaPage(props: { Lista: string }) {
     const Deletar = async () => {
         if (exclusao.excluir) {
             const dados = await DELETE(`http://localhost:3002/${props.Lista}/${exclusao.id}`)
-            console.log(dados)
-            if (dados && (dados.resp || dados.message || (dados.msg && dados.msg.resp!="work" && dados.msg!="Unidade Excluída"))) {
+            if (dados && (dados.resp || dados.message || (dados.msg && dados.msg.resp != "work" && dados.msg != "Unidade Excluída"))) {
                 setErro("Erro na conexão com o servidor")
             }
-            setExclusao(()=>({aberto:false,excluir:false,id:""}))
+            setExclusao(() => ({ aberto: false, excluir: false, id: "" }))
             Coletar()
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         Deletar()
-    },[exclusao.aberto])
+    }, [exclusao.aberto])
 
     //função que apenas seta a tag filter para se abrir
     const OpenFilter = (e) => {
@@ -78,7 +81,6 @@ export default function ListaPage(props: { Lista: string }) {
     useEffect(() => {
         setErro("")
         Coletar()
-        console.log(datas)
     }, [props.Lista])
 
 
@@ -92,7 +94,7 @@ export default function ListaPage(props: { Lista: string }) {
 
 
                     <h1>{props.Lista}</h1>
-                    {(props.Lista !== "Clientes" && props.Lista !== "Funcionarios" && props.Lista !== "Pacientes") || (props.Lista === "Pacientes" && auth.Conta === "cliente") ?
+                    {(props.Lista !== "Clientes" && props.Lista !== "Funcionarios" && props.Lista !== "Pacientes" && props.Lista !== "Compras" && props.Lista !== "Vendas") || (props.Lista === "Pacientes" && auth.Conta === "cliente") ?
                         //Um if bem especifico só olhar ai não é tão dificil é só pra dizer se vai permitir o usuario adicionar ou não
                         <>
                             <LinkContainer style={{ marginBottom: "01%" }} to="/Adicionar" state={{ lista: props.Lista }}>
@@ -105,20 +107,20 @@ export default function ListaPage(props: { Lista: string }) {
 
                     </div>
                     <br />
-                    {(auth.Conta === "funcionario") && props.Lista !== "Clientes" ?
-                    //se o usuario for funcionario e a tabela não for cliente
+                    {(auth.Conta === "funcionario") && props.Lista !== "Clientes" && props.Lista !== "Vendas" ?
+                        //se o usuario for funcionario e a tabela não for cliente
                         <>
                             <button style={{ marginRight: "2%" }} onClick={(e) => { OpenFilter(e) }}>Mais</button>
                             <div ref={FiltroPlus} style={{ display: "none" }}>
                                 <div style={{ display: 'flex', justifyContent: "center", width: "100%", marginTop: "10px", gap: '10px' }}>
                                     {props.Lista !== "Funcionarios" && props.Lista !== "Pacientes" ?
-                                    //se n for funcionario e n for pacientes
-                                        <input type="text" style={{ width: "30%" }} placeholder={props.Lista === "Produtos" ? "fornecedor" : "endereço"} onChange={(e) => { setFiltro((prevState) => ({ ...prevState, Cara1: e.target.value === "" ? "_" : e.target.value })) }} />
+                                        //se n for funcionario e n for pacientes
+                                        <input type="text" style={{ width: "30%" }} placeholder={props.Lista === "Produtos" ? "fornecedor" : props.Lista === "Compras" ? "Produto" : "endereço"} onChange={(e) => { setFiltro((prevState) => ({ ...prevState, Cara1: e.target.value === "" ? "_" : e.target.value })) }} />
                                         :
                                         <>{props.Lista === 'Pacientes' ? <input type="text" style={{ width: "30%" }} placeholder={"Dono"} onChange={(e) => { setFiltro((prevState) => ({ ...prevState, Cara1: e.target.value === "" ? "_" : e.target.value })) }} /> : null}</>
                                     }
                                     {props.Lista === "Funcionarios" ?
-                                    //se for para funcionario isso é só pra dizer o que vai ter no botão mais de pesquisar
+                                        //se for para funcionario isso é só pra dizer o que vai ter no botão mais de pesquisar
                                         <>
                                             <input type="text" style={{ width: "30%" }} placeholder="especialidade" onChange={(e) => { setFiltro((prevState) => ({ ...prevState, Cara1: e.target.value === "" ? "_" : e.target.value })) }} />
                                             <input type="text" style={{ width: "30%" }} placeholder="função" onChange={(e) => { setFiltro((prevState) => ({ ...prevState, Cara2: e.target.value === "" ? "_" : e.target.value })) }} />
@@ -135,18 +137,25 @@ export default function ListaPage(props: { Lista: string }) {
                     <hr />
                     <div className='ErroBlock' style={{ display: erro !== "" ? 'block' : "none" }}><p>{erro}</p></div>
                     {datas.length >= 1 ?
-                    //se tiver muita coisa na lista ele cria uma tabela que pode mover mais do que a tela permite
+                        //se tiver muita coisa na lista ele cria uma tabela que pode mover mais do que a tela permite
                         <div style={{ overflowX: "auto", overflowY: "auto", height: "450px" }}>
                             <table>
                                 <thead>
                                     <tr>
                                         {chave?.map((item) => {
                                             //AQUI FICA AS CHAVES DA LISTA 
-                                            if (item !== "id" && item !== "id_dono" && item !== "senha" && item !== "validade" && item !=="img") {
+                                            if (item !== "id" && item !== "id_dono" && item !== "senha" && item !== "validade" && item !== "img" && item !== "parcelas") {
                                                 return (
-                                                    <th style={{ border: "1px solid black", padding: "1px", width: "30%" }}>
-                                                        {item}
-                                                    </th>
+
+                                                    <>
+                                                        {item === "quantidade" && props.Lista !== "Produtos" ?
+                                                            <></> :
+                                                            <th style={{ border: "1px solid black", padding: "1px", width: "30%" }}>
+                                                                {item}
+                                                            </th>
+                                                        }
+                                                    </>
+
                                                 )
                                             } else { return (<></>) }
                                         })}
@@ -183,7 +192,7 @@ export default function ListaPage(props: { Lista: string }) {
                                                     }
                                                     <td style={{ border: "1px solid black" }}>
                                                         <LinkContainer style={{ width: "100%", backgroundColor: "blue", color: "white" }} to="/Editar" state={{ dados: data, lista: props.Lista }}><button >Editar</button></LinkContainer>
-                                                        <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState)=>({...prevState,aberto:true,id:data.id})) }}>Excluir</button>
+                                                        <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState) => ({ ...prevState, aberto: true, id: data.id })) }}>Excluir</button>
                                                     </td>
                                                 </tr>
                                             )
@@ -219,7 +228,7 @@ export default function ListaPage(props: { Lista: string }) {
                                                         : null}
                                                     <div style={{ border: "1px solid black" }}>
                                                         <LinkContainer style={{ width: "100%", backgroundColor: "blue", color: "white" }} to="/Editar" state={{ dados: data, lista: props.Lista }}><button >Editar</button></LinkContainer>
-                                                        <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState)=>({...prevState,aberto:true,id:data  .cpf})) }} >Excluir</button>
+                                                        <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState) => ({ ...prevState, aberto: true, id: data.cpf })) }} >Excluir</button>
                                                     </div>
                                                 </tr>
                                             )
@@ -240,7 +249,44 @@ export default function ListaPage(props: { Lista: string }) {
                                                     </td>
                                                     <td style={{ border: "1px solid black" }}>
                                                         <LinkContainer style={{ width: "100%", backgroundColor: "blue", color: "white" }} to="/Editar" state={{ dados: data, lista: props.Lista }}><button >Editar</button></LinkContainer>
-                                                        <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState)=>({...prevState,aberto:true,id:data.data.unidade})) }}>Excluir</button>
+                                                        <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState) => ({ ...prevState, aberto: true, id: data.data.unidade })) }}>Excluir</button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        } else if (props.Lista === "Compras" || props.Lista === "Vendas") {
+                                            console.log(datas)
+                                            return (
+                                                <tr >
+                                                    <td style={{ border: "1px solid black" }}>
+                                                        {data.cpf}
+                                                    </td>
+                                                    {props.Lista === "Compras" ?
+                                                        <td style={{ border: "1px solid black" }}>
+                                                            {data.prodId}
+                                                        </td> : null}
+                                                    <td style={{ border: "1px solid black" }}>
+                                                        {data.data}
+                                                    </td>
+                                                    {props.Lista === "Compras" ?
+                                                        <td style={{ border: "1px solid black" }}>
+                                                            {data.qntd}
+                                                        </td> : null
+                                                    }
+                                                    <td style={{ border: "1px solid black" }}>
+                                                        {data.valor}
+                                                    </td>
+                                                    {props.Lista === "Vendas" ?
+                                                        <td style={{ border: "1px solid black" }}>
+                                                            {data.formaPagamento}
+                                                        </td> : null}
+                                                    <td style={{ border: "1px solid black" }}>
+                                                        <LinkContainer style={{ width: "100%", backgroundColor: "blue", color: "white" }} to="/Editar" state={{ dados: data, lista: props.Lista }}><button >Editar</button></LinkContainer>
+                                                        {props.Lista !== "Compras" ?
+                                                            <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState) => ({ ...prevState, aberto: true, id: data.id })) }}>Excluir</button>
+                                                            :
+                                                            <LinkContainer to={`/Comprar/estoque/${data.id}`} style={{ width: "100%", backgroundColor: "green", color: "white" }}>
+                                                                <button>Comprar mais</button>
+                                                            </LinkContainer>}
                                                     </td>
                                                 </tr>
                                             )
@@ -264,7 +310,12 @@ export default function ListaPage(props: { Lista: string }) {
                                                     </td>
                                                     <td style={{ border: "1px solid black" }}>
                                                         <LinkContainer style={{ width: "100%", backgroundColor: "blue", color: "white" }} to="/Editar" state={{ dados: data, lista: props.Lista }}><button >Editar</button></LinkContainer>
-                                                        {props.Lista!=="Produtos"?<button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState)=>({...prevState,aberto:true,id:data.id})) }}>Excluir</button>:null}
+                                                        {props.Lista !== "Produtos" ?
+                                                            <button style={{ width: "100%", backgroundColor: "red", color: "white" }} onClick={() => { setExclusao((prevState) => ({ ...prevState, aberto: true, id: data.id })) }}>Excluir</button>
+                                                            :
+                                                            <LinkContainer to={`/Comprar/estoque/${data.id}`} style={{ width: "100%", backgroundColor: "green", color: "white" }}>
+                                                                <button>Comprar mais</button>
+                                                            </LinkContainer>}
                                                     </td>
                                                 </tr>
                                             )

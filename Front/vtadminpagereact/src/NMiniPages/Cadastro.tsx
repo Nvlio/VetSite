@@ -453,10 +453,6 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
                                                 />
                                             </div>
                                             <div className="FormBody">
-                                                <p className='form'>Quantidade</p>
-                                                <button onClick={() => (setOpen(1))}>Adicionar</button>
-                                            </div>
-                                            <div className="FormBody">
                                                 <p className='form'>Fornecedor</p>
                                                 <input type="text" className="form-control custom-input" placeholder={props.info?.fornecedor}
                                                     onClick={(e) => { BeginState(e, "nome") }}

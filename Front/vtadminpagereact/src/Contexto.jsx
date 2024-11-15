@@ -8,6 +8,7 @@ export function ContextoSite(props) {
         height: "738"
     })
 
+
     useEffect(() => {
         const WindowSizeHandler = () => {
             setTamanhoJanela({
@@ -25,7 +26,7 @@ export function ContextoSite(props) {
     
 
     return (
-        <Contexto.Provider value={{ tamanhoJanela }}>
+        <Contexto.Provider value={{ tamanhoJanela}}>
             {props.children}
         </Contexto.Provider>
     )

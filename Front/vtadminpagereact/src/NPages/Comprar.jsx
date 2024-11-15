@@ -6,9 +6,6 @@ import { useParams } from "react-router-dom"
 import MNpage from "../NMiniPages/CompraMP.jsx"
 
 export default function ComprarPage(){
-    const params = useParams()
-    const id = params.id
-    console.log(id)
 
     let imgvar = {
         imgbg: ImageMainBG,
@@ -24,7 +21,7 @@ export default function ComprarPage(){
                 <div style={{ backgroundColor: "white", width: "94%", height: "100%", marginLeft: "3%",padding:"2% 0%" }}>
                     <h1>Finalizar Compra</h1>
                     <hr/>
-                    <MNpage idprod={id}/>
+                    <MNpage />
                 </div>
             </div>
         </div>

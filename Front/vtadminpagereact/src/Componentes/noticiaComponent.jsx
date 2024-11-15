@@ -28,7 +28,7 @@ export default function NewsStruc(props) {
 
     console.log(props.info)
     return (
-        //pagina para noticia especifica
+        //pagina para noticia
         <>
             <div style={exclusao.aberto ? { display: "block",marginLeft:"17%",marginTop:"17.16%" } : { display: "none" }}><ConfirmTable text="Quer realmente excluir?" Excluir={setExclusao} /></div>
             <div style={{ margin: "2% 05%", border: "1px solid black", backgroundColor: "white", borderRadius: "10px", paddingBottom: "1%" }}>

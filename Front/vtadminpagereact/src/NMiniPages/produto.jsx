@@ -2,12 +2,16 @@ import { useEffect, useState } from "react"
 import { Button } from "react-bootstrap"
 import { CheckAuteticacao } from "../nFuncoes/auntenticar"
 import { useLocation, useNavigate } from "react-router-dom"
+import CarrinhoProduto from "../nFuncoes/carrinho"
 
 export default function Produtomini(props) {
     const [imgs, setImgs] = useState()
     const [links, setLinks] = useState()
+    const [qntd, setQntd] = useState(0)
+    const [msg, setMsg] = useState("")
     const auth = CheckAuteticacao()
     const location = useNavigate()
+
 
     const GETimgs = async () => {
         const resp = await fetch(`http://localhost:3002/ImgProd/${props.data.id}`, { method: "GET" })
@@ -30,7 +34,6 @@ export default function Produtomini(props) {
 
     //faz a configuração para adicionar as imagens a lista do produto
     function GetImgs() {
-        console.log(imgs)
         if (imgs) {
             const imglink = []
             imgs.map((img) => {
@@ -42,14 +45,30 @@ export default function Produtomini(props) {
         }
     }
 
-    function Comprar() {
+    const atualizarMSG = async () => {
+        setMsg("Produto(s) adicionado(s) ao carrinho")
+        setTimeout(() => {
+            setMsg("")
+        }, 2000)
+    }
+
+    async function Comprar() {
+
         let path;
         if (auth) {
-            path = `/Comprar/${props.data.id}`
+            console.log(localStorage.getItem("carrinho"))
+            const objeto = { valor: props.data.valor * qntd, idProd: props.data.id, quantidade: parseInt(qntd), totaldisp: parseInt(props.data.quantidade - qntd) }
+            const carrinho = new CarrinhoProduto(objeto)
+            const resp = carrinho.Adicionar()
+            if (resp !== 'Erro') {
+                await atualizarMSG("Carrinho atualizado")
+            }
+
         } else {
             path = `/Login`
+            location(path)
         }
-        location(path)
+
 
 
     }
@@ -62,7 +81,6 @@ export default function Produtomini(props) {
 
     useEffect(() => {
         GetImgs()
-        console.log(imgs)
     }, [imgs])
 
     useEffect(() => {
@@ -80,16 +98,20 @@ export default function Produtomini(props) {
                 <div>
                     {imgs.map((img, ind) => {
                         return (
-                            <img src={links[ind]}  height={500} />
+                            <img src={links[ind]} height={500} />
                         )
                     })}
                 </div>
                 <p>{props.data.descricao}</p>
                 <br /><br />
-                {props.data.quantidade===0?
-                <div style={{ width: "50%",marginLeft:"25%", height: "80px",backgroundColor:'gray'}}>Não disponivel</div>
-                :
-                <Button onClick={Comprar} style={{ width: "50%", height: "80px" }} variant="success">Comprar</Button>}
+                {msg !== "" ? <div style={{ backgroundColor: 'green', color: "white", width: '30%', marginLeft: "35%", marginBottom: "2%", borderRadius: "10px" }}>{msg}</div> : null}
+                <input type="text" placeholder="quantidade a ser comprada" onChange={(e) => { setQntd(e.target.value) }} /><br />
+                <p>{props.data.quantidade - qntd < 0 ? 'acima do disponivel' : `quantidade disponivel ${props.data.quantidade - qntd}`}</p>
+                <br />
+                {props.data.quantidade === 0 ?
+                    <div style={{ width: "50%", marginLeft: "25%", height: "80px", backgroundColor: 'gray' }}>Não disponivel</div>
+                    :
+                    <Button onClick={Comprar} style={{ width: "50%", height: "80px" }} variant="success">Comprar</Button>}
                 <br /><br /><br />
             </div>
         )

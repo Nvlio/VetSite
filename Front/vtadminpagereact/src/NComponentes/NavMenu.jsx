@@ -15,6 +15,7 @@ import "../bootstrap/assets/vendor/boxicons/css/boxicons.min.css"
 import "../bootstrap/assets/vendor/glightbox/css/glightbox.min.css"
 import "../bootstrap/assets/vendor/swiper/swiper-bundle.min.css"
 import "../bootstrap/assets/css/style.css"
+import CarrinhoProduto from "../nFuncoes/carrinho";
 
 
 //componente voltado ao navmenu do site
@@ -22,11 +23,21 @@ export default function NavMenuBarComp(props) {
     const auth = CheckAuteticacao();//coleta a autenticação do usuario
     const [menuOpen, setMenuOpen] = useState(false); // Estado para controlar se o menu está aberto
     const [tamanhoJanela, setTamanhoJanela] = useState({ widht: "", height: "" })
+    const [carrinhoCompra, setCarrinho] = useState([])
+    const carrinho = new CarrinhoProduto()
+
+
+    async function Coletar() {
+        const itens = await carrinho.Coletar()
+        setCarrinho(itens)
+    }
+
 
     /*
     coleta e seta o valor o tamanho da tela do navegador ao iniciar o site
     */
     useEffect(() => {
+        Coletar()
         const WindowSizeHandler = () => {
             setTamanhoJanela({
                 widht: window.innerWidth,
@@ -38,7 +49,10 @@ export default function NavMenuBarComp(props) {
         return () => {
             window.removeEventListener("resize", WindowSizeHandler);
         }
+        Coletar()
     }, [])
+
+    useEffect(() => { console.log(carrinhoCompra) }, [carrinhoCompra])
 
 
 
@@ -109,6 +123,9 @@ export default function NavMenuBarComp(props) {
                             <>
                                 <li><a className="nav-link scrollto" href="Profile">Conta</a></li>
                                 <li><a className="nav-link scrollto" href="Lista">Lista</a></li>
+                                {carrinhoCompra.length !== 0 ?
+                                    <li><a className="nav-link scrollto" href="Comprar">Finalizar Compra</a></li>
+                                    : null}
                             </>
                             : null}
                         {auth === false ?
@@ -173,6 +190,7 @@ export default function NavMenuBarComp(props) {
                                             </ul>
                                         </li>
                                         <li><a href="/">Especialidades</a></li>
+                                        {auth.Conta==="funcionario"?<li><a href="/Contas">Financeiro</a></li>:null}
                                         <li className="dropdown"><a href="/">Pequenos <i className="bi bi-chevron-right"></i></a>
                                             <ul>
                                                 <li><a href="/">Clínica Médica de Cachorros</a></li>
@@ -204,6 +222,9 @@ export default function NavMenuBarComp(props) {
                                     <>
                                         <li><a className="nav-link scrollto" href="Profile">Conta</a></li>
                                         <li><a className="nav-link scrollto" href="Lista">Lista</a></li>
+                                        {carrinhoCompra.length !== 0 ?
+                                            <li><a className="nav-link scrollto" href="Comprar">Finalizar Compra</a></li>
+                                            : null}
                                     </>
                                     : null}
                             </ul>

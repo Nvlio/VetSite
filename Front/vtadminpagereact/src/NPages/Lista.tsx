@@ -31,6 +31,8 @@ export default function ListaMainPage() {
                             <p style={{ border: "1px solid black", width: "100%", backgroundColor: "white" }} id="clicavel" onClick={(e) => { setLista(e.target.textContent) }}>Unidades</p>
                             <p style={{ border: "1px solid black", width: "100%", backgroundColor: "white" }} id="clicavel" onClick={(e) => { setLista(e.target.textContent) }}>Produtos</p>
                             <p style={{ border: "1px solid black", width: "100%", backgroundColor: "white" }} id="clicavel" onClick={(e) => { setLista(e.target.textContent) }}>Pacientes</p>
+                            <p style={{ border: "1px solid black", width: "100%", backgroundColor: "white" }} id="clicavel" onClick={(e) => { setLista(e.target.textContent) }}>Compras</p>
+                            <p style={{ border: "1px solid black", width: "100%", backgroundColor: "white" }} id="clicavel" onClick={(e) => { setLista(e.target.textContent) }}>Vendas</p>
                         </div>
                         <ListaPage Lista={lista} />
                     </div>
