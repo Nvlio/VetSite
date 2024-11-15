@@ -45,13 +45,15 @@ function App() {
         <Route path='/Login' element={<FormPage tipo={1}/>}/>
         <Route path='/Cadastro' element={<FormPage tipo={2}/>}/>
         <Route path='/Adicionar' element={<FormPage tipo={3}/>}/>
-        <Route path='/Comprar/:id' element={<ComprarPage/>}/>
+        <Route path='/Comprar' element={<ComprarPage/>}/>
+        <Route path='/Comprar/Estoque/:id' element={<ComprarPage/>}/>
         <Route path='/Produtos' element={<ProduPage/>}/>
         <Route path='/Produto' element={<ProdPage/>}/>
         <Route path='/Editar' element={<FormPage tipo={4}/>}/>
         <Route path='/Profile' element={<ProfileMain/>}/>
         <Route path='/Lista' element = {<ListaMainPage/>}/>
         <Route path="/Blog" element={<BlogPage/>}/>
+        <Route path="/Contas" element={<BlogPage/>}/>
         <Route path="/AddNoticia" element={<AddNotiPage/>}/>
         <Route path='/News' element={<NewsPage/>}/>
         <Route path='/*' element={<ErroPage/>}/>
