@@ -35,8 +35,12 @@ import ProduPage from './NPages/Prod.tsx';
 import ProdPage from './NPages/SingleProd.jsx';
 import ComprarPage from './NPages/Comprar.jsx';
 import ContasPage from './Pages/pages/Contas.tsx';
+import PagarConta from './NPages/PagarContas.jsx';
+import AddContaPage from './NPages/AdicionarConta.jsx';
+import { CheckAuteticacao } from './nFuncoes/auntenticar.js';
 
 function App() {
+  const auth = CheckAuteticacao()
   return (
     //rotas de todas as paginas
     <div className="App">
@@ -54,7 +58,9 @@ function App() {
         <Route path='/Profile' element={<ProfileMain/>}/>
         <Route path='/Lista' element = {<ListaMainPage/>}/>
         <Route path="/Blog" element={<BlogPage/>}/>
-        <Route path="/Contas" element={<ContasPage  />}/>
+        <Route path="/Contas" element={auth?<ContasPage/>:<FormPage tipo={1}/>}/>
+        <Route path="/Contas/:id" element={auth?<PagarConta/>:<FormPage tipo={1}/>}/>
+        <Route path="/Contas/Adicionar" element={auth?<AddContaPage/>:<FormPage tipo={1}/>}/>
         <Route path="/AddNoticia" element={<AddNotiPage/>}/>
         <Route path='/News' element={<NewsPage/>}/>
         <Route path='/*' element={<ErroPage/>}/>
