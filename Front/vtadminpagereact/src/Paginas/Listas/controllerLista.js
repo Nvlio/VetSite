@@ -141,7 +141,6 @@ export default function ControllerLista() {
         setLista()
         if (selectedLista !== "perfil" && selectedLista !== "editar") {
             const resposta = await service.GET(selectedLista)
-            console.log(resposta)
             const itens = resposta.resp.itens ? resposta.resp.itens : resposta.resp
             setLista([...itens])
         } else {

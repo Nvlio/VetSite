@@ -18,13 +18,7 @@ export default function CommentList() {
         const [commentActive, setCommentActiv] = useState(0)
 
         async function conectar(){
-            let itens:any
-            try{
-                itens = await GET("http://localhost:3002/Comentarios")
-                console.log(itens)
-            }catch(e){
-                itens = [{id: 1, elogio: 'wadwada', comentario: 'dadadadada', dono: ["João"]}]
-            }
+            const itens:any = await GET("http://localhost:3002/Comentarios")
             setFcomments(itens)
         }
 
@@ -41,9 +35,9 @@ export default function CommentList() {
                 <div className="vertical" style={{ width: "100%" }}>
                     <div className="showlist" style={{ width:tamanhoJanela.width>=1110?'10%':'100%', height:tamanhoJanela.width>=1110?'180px':'90%'}}>
                         <ul id="comment">
-                            {comments?.map((comment, ind) => {
+                            {fcomments?.map((comment, ind) => {
                                 return (
-                                    <li onClick={() => { setCommentActiv(ind) }} style={{ backgroundColor: commentActive === ind ? 'red' : "" }} key={comment.nome}>{comment.nome}</li>
+                                    <li onClick={() => { setCommentActiv(ind) }} style={{ backgroundColor: commentActive === ind ? 'red' : "" }} key={comment.dono}>{comment.dono}</li>
                                 )
                             })}
                         </ul>
@@ -53,9 +47,9 @@ export default function CommentList() {
     
                     <div style={{ width: "70%"}} className="Flex">
                         <div   style={{ width: '70%'}}>
-                            <h5>{comments[commentActive].elogio}</h5>
+                            <h5>{fcomments[commentActive].elogio}</h5>
                             <hr />
-                            <p>{comments[commentActive].comentario}</p>
+                            <p>{fcomments[commentActive].comentario}</p>
                         </div>
                         <div>
                             <img alt="foto do comentador" src={comments[commentActive].href} width={'100%'}/>

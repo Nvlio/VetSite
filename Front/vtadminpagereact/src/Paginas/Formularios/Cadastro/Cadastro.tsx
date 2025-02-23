@@ -11,7 +11,7 @@ import EdicaoControll from '../Edicao/edicaoControll';
 
 
 //mini pagina voltada a formulario de Login
-export default function     FormuCadastro() {
+export default function FormuCadastro() {
     const {
         data,
         error,
