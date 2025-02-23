@@ -52,7 +52,6 @@ export default function NavMenuBarComp(props) {
         Coletar()
     }, [])
 
-    useEffect(() => { console.log(carrinhoCompra) }, [carrinhoCompra])
 
 
 
@@ -72,7 +71,7 @@ export default function NavMenuBarComp(props) {
                         <li><a className="nav-link scrollto active" href="/">Home</a></li>
                         <li className="dropdown" ><a href="/"><span>Clínica</span> <i className="bi bi-chevron-down"></i></a>
                             <ul id={tamanhoJanela.widht <= 600 ? "cellphone" : ""}>
-                                <li><a href="/">Sobre</a></li>
+                                <li><a href="/">Sobred</a></li>
                                 <li><a href="/">Missão</a></li>
                                 <li><a href="/">Valores</a></li>
                             </ul>
@@ -121,8 +120,7 @@ export default function NavMenuBarComp(props) {
                         <li><a className="nav-link scrollto" href="/Produtos">Produtos</a></li>
                         {auth ?
                             <>
-                                <li><a className="nav-link scrollto" href="Profile">Conta</a></li>
-                                <li><a className="nav-link scrollto" href="Lista">Lista</a></li>
+                                <li><a className="nav-link scrollto" href="/Lista">Painel de Dados</a></li>
                                 {carrinhoCompra.length !== 0 ?
                                     <li><a className="nav-link scrollto" href="Comprar">Finalizar Compra</a></li>
                                     : null}
@@ -220,8 +218,7 @@ export default function NavMenuBarComp(props) {
                                 <li><a className="nav-link scrollto" href="/Produtos">Produtos</a></li>
                                 {auth ?
                                     <>
-                                        <li><a className="nav-link scrollto" href="Profile">Conta</a></li>
-                                        <li><a className="nav-link scrollto" href="Lista">Lista</a></li>
+                                        <li><a className="nav-link scrollto" href="/Lista">Painel de Dados</a></li>
                                         {carrinhoCompra.length !== 0 ?
                                             <li><a className="nav-link scrollto" href="Comprar">Finalizar Compra</a></li>
                                             : null}

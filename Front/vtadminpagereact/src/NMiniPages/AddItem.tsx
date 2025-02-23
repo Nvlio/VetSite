@@ -66,9 +66,6 @@ export default function AddPage(props: { lista: string }) {
         data.imagem.forEach((file: File, index: number) => {
             formdata.append(`imagem${index}`, file)
         })
-        for (let item of formdata.entries()) {
-            console.log(item)
-        }
         const resposta = await fetch(`${url}Produtos`, {
             method: "POST", body: formdata
         })
@@ -151,7 +148,6 @@ export default function AddPage(props: { lista: string }) {
 
         const files = [...event.target.files];
         const filesName = files.map((file) => file.name)
-        console.log(filesName)
         setData((prev) => ({ ...prev, imagem: [...files] }))
 
     }

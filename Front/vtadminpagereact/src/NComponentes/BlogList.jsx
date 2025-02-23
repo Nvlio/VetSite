@@ -52,7 +52,6 @@ export default function BlogList(props) {
 
     async function Pesquisar(e) {
         if (e.key === "Enter" || e === "button") {
-            console.log('Oi')
             setEstado("Carregando")
             fetch(`${url}/${title}`, { method: "GET", headers: { "content-type": "application/json" } })
                 .then((resposta) => { return resposta.json() })
@@ -104,7 +103,6 @@ export default function BlogList(props) {
                     <hr />
                     <div style={{ border: "1px solid black", height: "100vh", margin: "-01.3% 06% 0%", overflowY: 'auto' }}>
                         {noticias.map((noticia, ind) => {
-                            console.log(noticia, new Date(noticia.datE)<=new Date())
                             if (new Date(noticia.datE) <= new Date()) {
                                 Del(noticia)
                             }

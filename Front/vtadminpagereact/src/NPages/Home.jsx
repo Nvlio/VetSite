@@ -9,14 +9,15 @@ import CommentList from "../NComponentes/ComentComp.tsx";
 
 //pagina que estrutura a home page inicial, vai conter uma grande parte dos componentes.
 export default function HomePage() {
+    //constante pega com o valor atual da tela do usuario
     const { tamanhoJanela } = useContext(Contexto)
 
-    
+
 
     return (
         <LayoutMain>
             <div className="BlackBG" />
-            <ImagePage mainText="Bem vindo a" specialText="CãoXonado" text="Onde o amor, a cura e a dedicação se encontram pelo seu pet!" img={1} />
+            <ImagePage mainText="Bem vindo a" specialText="CãoXonado" text="Você está usando o site na versão offline, tentei simunlar como seria algumas paginas sem a necessidade de conexão com o backend, mas ainda é nessessário o mesmo para realizar ações | acessar algumas paginas" img={1} />
             <ImagePage
                 mainText="A Clínica Veterinária CãoXonado"
                 extra={'2'}

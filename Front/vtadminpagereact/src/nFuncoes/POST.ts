@@ -5,6 +5,7 @@ import { Autenticar } from "./auntenticar";
 
 //função que faz POST voltado para cadastro
 export async function Login(url: string, info: { senha: string, email: string }, tipo: string) {
+    alert("Login")
     tipo = tipo === "Funcionário" ? "Funcionarios" : 'Clientes'
     const x = await fetch(`${url}${tipo}/${'login'}`, {
         method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
@@ -46,6 +47,7 @@ export async function Cadastro(
     tipo: string
 ) {
     tipo = tipo === "Funcionário" ? "Funcionarios" : 'Clientes'
+    alert("cadastro")
     fetch(`${url}${tipo}`, {
         method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
             senha: info.senha,
@@ -73,6 +75,7 @@ export async function Cadastro(
 }
 
 export async function POST(url: string, itens: any, extra: string) {
+    alert("post")
     return fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: itens })
         .then((resposta) => { return resposta.json() })
         .then((resp) => {
@@ -80,8 +83,7 @@ export async function POST(url: string, itens: any, extra: string) {
             if (resp.message) {
                 return resp
             } else {
-                    if(extra!==null){
-                        
+                    if(extra){
                         window.location.href = `/${extra}`
                     }
             }

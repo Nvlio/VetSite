@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Form from 'react-bootstrap/Form';
 import { CheckAuteticacao } from '../nFuncoes/auntenticar.js';
 
-export default function FormNews(props) {
+export default function     FormNews(props) {
     const [dado, setDado] = useState({ titulo: "", subtitulo: "", artigo: "", imagemNome: "", imagem: "", dataPostagem: "", dataExclusao: "" })
     const url = "http://localhost:3002/Noticia"
     const auth = CheckAuteticacao()

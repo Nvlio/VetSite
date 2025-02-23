@@ -67,10 +67,8 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
         let msg: string;
         let valor: string;
         if (e.key === "Fim") {
-            console.log("oi")
             while (resp) {
                 resp = await Mask(data.email, "Email")
-                console.log(resp)
                 resp = await Mask(data.tel, "Telefone")
                 resp = await Mask(data.cpf, "CPF")
                 break
@@ -86,14 +84,11 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
         else if (e.key === "Enter") {
             if (tipo === "senha") {
                 msg = data.senha !== data.senha2 ? "senhas diferentes" : ""
-                console.log(msg)
 
             } else {
                 switch (tipo) {
                     case "email":
-                        console.log("email")
                         resp = await Mask(data.email, "Email")
-                        console.log(resp)
                         break
                     case "tel":
                         resp = await Mask(data.tel, "Telefone")
@@ -110,7 +105,6 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
                 }
                 msg = resp ? "" : "Campos Errados"
             }
-            console.log(msg)
             setData((prevState) => ({ ...prevState, erro: `${msg}` }))
             return resp
         }
@@ -225,7 +219,6 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
     }
 
     const EditarData = async () => {
-        console.log(props.lista)
         let ident: any;
         let contaUser: any;
         if ((props.lista === "Funcionarios" || props.lista === "Clientes") || (props.conta === "funcionario" || props.conta === "cliente")) {
@@ -236,7 +229,6 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
             ident = props.info.id
         }
         if (contaUser === "Produtos") {
-            console.log(props.info)
             const qntdade = parseInt(data.quantidade) - props.info?.quantidade
             alert("espera")
             if (qntdade > 0) {
@@ -250,7 +242,6 @@ export default function FormucadastroMini(props: { info: any, lista: string, con
             }
             alert("s")
         }
-        console.log(ident)
         await UPDATE(`${url}${contaUser}/${ident}`, props.lista, JSON.stringify({
             senha: data.senha,
             email: data.email,

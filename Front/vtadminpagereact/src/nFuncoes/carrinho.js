@@ -4,7 +4,7 @@ export default class CarrinhoProduto {
 
     constructor(item) {
         this.#objeto = item
-        this.#carrinhoLocal = JSON.parse(localStorage.getItem('carrinho')) || [];
+        this.#carrinhoLocal = [];
     }
 
     Adicionar() {
@@ -53,7 +53,7 @@ export default class CarrinhoProduto {
             )
             console.log(newLista)
         }
-        localStorage.setItem("carrinho",JSON.stringify(newLista))
+        localStorage.setItem("carrinho", JSON.stringify(newLista))
 
     }
 }

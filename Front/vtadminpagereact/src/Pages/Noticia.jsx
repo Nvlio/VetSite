@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import NavMenuBarComp from "../NComponentes/NavMenu.jsx";
-import NewsStruc from "../Componentes/noticiaComponent.jsx";
+import NewsStruc from "../NComponentes/noticiaComponent.jsx";
 import backGroundImg from "../public/Erro-bg.png"
 
 export default function NewsPage(prop){

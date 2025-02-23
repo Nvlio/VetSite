@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import img from "../public/estiloBasico.jpg"
-import BlogList from "../Componentes/BlogList";
+import BlogList from "../NComponentes/BlogList";
 import NavMenuBarComp from "../NComponentes/NavMenu";
 import { Contexto } from "../Contexto";
 

@@ -1,8 +1,69 @@
-li{
+.ListaClicavel {
+    cursor: pointer;
+    width: 110%;
+    padding-top: 5%;
+    margin-left: -10%;
+    padding-right: 11%;
+    height: 8%;
+    gap: 5%;
+    justify-content: center;
+    display: flex;
+}
+
+/* Carrinho */
+.Carrinho{
+    transition: ease-in-out 0.3s;
+}
+
+/* hide scrollbar */
+#hideScrollbar::-webkit-scrollbar{
+    display: none;
+}
+
+.EmCima:hover{
+    background-color: #0000001f;
+}
+
+/* scrollBar */
+.RegisterWindow{
+    padding: 4% 2%;
+    overflow-y:auto;
+    height:60vh;
+    background-color: #eeeeee;
+}
+
+.RegisterWindow::-webkit-scrollbar{
+    width: 10px;
+    background-color: #eeeeee;
+}
+
+.RegisterWindow::-webkit-scrollbar-thumb{
+    width: 2%;
+    background-color: #c7c7c7;
+}
+/* scrollBar */
+
+.Radio_custom input {
+    cursor: pointer;
+    border: 1px solid   black !important;
+}
+
+.borderBlack {
+    border: 1px solid rgb(199, 199, 199) !important
+}
+
+.ListaClicavel:hover {
+    cursor: pointer;
+    background-color: rgb(129, 47, 51);
+}
+
+/**/
+
+li {
     list-style-type: none;
 }
 
-select.Form{
+select.Form {
     width: 70%;
 }
 
@@ -21,14 +82,14 @@ select.Form{
     cursor: pointer;
 }
 
-select.form{
+select.form {
     width: 70% !important;
     height: 40px;
     margin-left: 15%;
     margin-top: 5%;
 }
 
-p.form{
+p.form {
     font-size: 13px;
     padding-top: 10px;
 }
@@ -88,8 +149,8 @@ hr#separador {
 
 }
 
-.Formulario input{
-        margin: 0% 10%;
+.Formulario input {
+    margin: 0% 10%;
 }
 
 .Text {
@@ -167,28 +228,28 @@ hr#separador {
     flex-direction: column;
 }
 
-.Tela{
+.Tela {
     text-align: left;
-    z-index:1;
-    position:relative;
+    z-index: 1;
+    position: relative;
 }
 
-.TelaFechar{
+.TelaFechar {
     z-index: 2;
-    position:fixed;
-    background-color:rgba(0, 0, 0, 0.8);
-    width:100%;
-    height:100vh;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 100%;
+    height: 100vh;
     margin-top: 0%;
     color: white;
-    display:flex;
+    display: flex;
     flex-direction: column;
-    padding:1%;
+    padding: 1%;
     align-items: center;
 }
 
 
-.TelaAdd{
+.TelaAdd {
     background-color: white;
     color: black;
     border-radius: 5%;
@@ -199,7 +260,7 @@ hr#separador {
     height: 55vh;
 }
 
-.vertical{
+.vertical {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -207,67 +268,67 @@ hr#separador {
     gap: 2%;
     list-style-type: none;
     color: white;
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-.vertical div{
-    width:40%;
-    flex-grow:1;
+.vertical div {
+    width: 40%;
+    flex-grow: 1;
     margin: 2% 0%;
 }
 
-@media (max-width:1110px){
+@media (max-width:1110px) {
 
-    
-    .vertical div{
-        width:100%;
+
+    .vertical div {
+        width: 100%;
     }
 }
 
-.vertical div div{
+.vertical div div {
     margin-left: 10px;
     margin-top: -01px;
 }
 
-.vertical div div div{
+.vertical div div div {
     width: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.vertical div a{
+.vertical div a {
     color: white;
     text-decoration: none;
 }
 
-.vertical div a:hover{
+.vertical div a:hover {
     color: rgb(255, 0, 0);
     text-decoration: none;
 }
 
-.vertical li{
+.vertical li {
     cursor: pointer;
 }
 
-.perfilImg{
+.perfilImg {
     border-radius: 50%;
     width: 70px;
     height: 70px;
     border: 4px solid rgba(128, 128, 128, 0.608);
 }
 
-.showlist{
-    border-right:1px solid orange;
+.showlist {
+    border-right: 1px solid orange;
     border-bottom: 0px;
 }
 
-@media(max-width:1110px){
-    .showlist{
-        border-right:0px solid orange;
-        border-bottom:1px solid orange;
+@media(max-width:1110px) {
+    .showlist {
+        border-right: 0px solid orange;
+        border-bottom: 1px solid orange;
     }
 }
 
-#comment li{
+#comment li {
     padding: 01%;
 }
 
@@ -385,7 +446,7 @@ hr#separador {
     color: "black" !important;
 }
 
-.DefaultDiv{
+.DefaultDiv {
     margin-top: 15%;
     background-color: rgba(255, 255, 255, 0.871);
     display: flex;
@@ -398,34 +459,34 @@ hr#separador {
     width: 60%;
 }
 
-.FormTitle{
+.FormTitle {
     background-color: black;
-    color: white ;
-    border-bottom:1px solid white
+    color: white;
+    border-bottom: 1px solid white
 }
 
-.FormBody{
-    margin-left: 10%; 
-    width: 70%; 
+.FormBody {
+    margin-left: 10%;
+    width: 70%;
     margin-top: 10px;
     display: flex
 }
 
-.FormMainBody{
+.FormMainBody {
     display: flex;
     flex-direction: column;
-    margin-left: 30%; 
-    width: 70%; 
+    margin-left: 30%;
+    width: 70%;
     margin-top: 10px;
     display: flex
 }
 
-.ErroInput{
+.ErroInput {
     border: 1px solid red;
     color: red;
 }
 
-.ErroBlock{
+.ErroBlock {
     border: 1px solid red;
     background-color: rgba(255, 0, 0, 0.49);
     color: rgb(255, 255, 255);
@@ -433,7 +494,7 @@ hr#separador {
     padding-top: 10px;
 }
 
-.Above{
+.Above {
     position: absolute;
     width: 100%;
     display: flex;
@@ -454,11 +515,11 @@ hr#separador {
     color: rgba(251, 199, 104, 0.978) !important;
 }
 
-#clicavel{
+#clicavel {
     cursor: pointer;
 }
 
-#central{
+#central {
     background-color: #000;
     position: absolute;
 }
@@ -545,7 +606,7 @@ hr#separador {
     /* Faz os links ocuparem a largura total do item da lista */
 }
 
-@media(max-width:926px){
+@media(max-width:926px) {
     .offcanvas-menu {
         background-color: white;
         margin-left: 64%;

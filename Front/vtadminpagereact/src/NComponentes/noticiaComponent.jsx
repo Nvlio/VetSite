@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { CheckAuteticacao } from "../nFuncoes/auntenticar";
+import { CheckAuteticacao } from "../nFuncoes/auntenticar.js";
 import Button from 'react-bootstrap/Button';
 import { LinkContainer } from "react-router-bootstrap";
-import ConfirmTable from "../NComponentes/Confirmation.tsx";
+import ConfirmTable from "./Confirmation.tsx";
 
 export default function NewsStruc(props) {
     const auth = CheckAuteticacao()
