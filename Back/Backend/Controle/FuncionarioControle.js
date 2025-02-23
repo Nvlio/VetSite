@@ -1,4 +1,5 @@
 import { Autenticador } from "../Functions/autenticar.js";
+import salvarIMG from "../Functions/Imagem.js";
 import FuncionariMod from "../Modelo/FuncionariosModelo.js";
 
 export default class FuncionarioControle {
@@ -76,6 +77,7 @@ export default class FuncionarioControle {
         if (req.method == "POST" && req.is('application/json')) {
 
             const body = req.body;
+            const imagem = req.file;
             const tipo = req.params.tipo
             const cpf = body.cpf;
             const nome = body.nome;
@@ -85,11 +87,18 @@ export default class FuncionarioControle {
             const especialidade = body.especialidade;
             const unidade = body.unidade;
             const funcao = body.funcao;
+            const salario = body.salario;
+            const cep = body.cep;
+            const endereco = body.endereco;
+            const numero = body.numero;
+            const bairro = body.bairro;
+            const cidade = body.cidade;
+            const estado = body.estado;
             let autenticar
             const auntenticacao = new Autenticador()
-
-            if (cpf, nome, telefone, senha, email, especialidade, unidade, funcao) {
-                const modelo = new FuncionariMod(cpf, nome, telefone, senha, email, especialidade, funcao, unidade);
+            await salvarIMG({nome:body.imgNome},imagem,nome,null,3)
+            if (cpf, nome, telefone, senha, email, especialidade, unidade, funcao,salario,cep,endereco,numero,bairro,cidade,estado) {
+                const modelo = new FuncionariMod(cpf, nome, telefone, senha, email, especialidade, funcao, unidade,salario,cep,endereco,numero,bairro,cidade,estado);
                 const resposta = await modelo.Inserir(tipo)
                 if (resposta.resposta == "work") {
                     autenticar = await auntenticacao.autenticar({ Email: email, Senha: senha, Conta: 'funcionario', cpf: cpf })
@@ -108,21 +117,30 @@ export default class FuncionarioControle {
 
     //função para atualizar 
     async PUT(req, resp) {
-        if (req.method == "PUT" && req.is('application/json')) {
+        if (req.method == "PUT" ) {
 
             const body = req.body;
+            const imagem = req.file;
             const cpf = req.params.cpf
-            const nome = body.nome;
             const telefone = body.telefone;
             const senha = body.senha;
             const email = body.email;
+            const nome = body.nome
             const especialidade = body.especialidade;
             const unidade = body.unidade;
             const funcao = body.funcao;
+            const salario = body.salario;
+            const cep = body.cep;
+            const endereco = body.endereco;
+            const numero = body.numero;
+            const bairro = body.bairro;
+            const cidade = body.cidade;
+            const estado = body.estado;
 
+            await salvarIMG({nome:body.imgNome},imagem,body.nome,null,3)
             if (cpf != undefined || cpf != "" || cpf != "undefined") {
                 const modelo = new FuncionariMod(cpf);
-                const resposta = await modelo.Atualizar(nome, telefone, senha, email, especialidade, unidade, funcao)
+                const resposta = await modelo.Atualizar(nome, telefone, senha, email, especialidade, unidade, funcao,salario,cep,endereco,numero,bairro,cidade,estado,imagem)
                 console.log(resposta)
                 return resp.json({ resp: resposta })
             }

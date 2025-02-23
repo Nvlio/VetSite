@@ -5,7 +5,7 @@ export default class ClienteControle {
 
     //função para pegar dados
     async GET(req, resp) {
-        if (req.    method == "GET") {
+        if (req.method == "GET") {
 
             const modelo = new ClienteMod();
             const resposta = await modelo.Pegar()
@@ -35,7 +35,6 @@ export default class ClienteControle {
 
     async LOGIN(req, resp) {
         if (req.method == "POST") {
-            const tipo = req.params.tipo
             const body = req.body
             const email = body.email
             const senha = body.senha
@@ -74,25 +73,35 @@ export default class ClienteControle {
             const telefone = body.telefone;
             const senha = body.senha;
             const email = body.email;
+            const recado = body.recado;
+            const rg = body.rg;
+            const profissao = body.profissao;
+            const rua = body.rua;
+            const CEP = body.cep;
+            const numero = body.numero;
+            const bairro = body.bairro;
+            const cidade = body.cidade;
+            const estado = body.estado;
+            const observacao = body.observacao;
             let autenticar
             const auntenticacao = new Autenticador()
 
-            if (cpf, nome, telefone, senha, email || (email, senha) && tipo === "Login") {
-                const modelo = new ClienteMod(cpf, nome, telefone, senha, email);
+            if (cpf, nome, telefone, senha, email,recado,rg,profissao,rua,CEP,numero,bairro,cidade,estado || (email, senha) && tipo === "Login") {
+                const modelo = new ClienteMod(cpf, nome, telefone, senha, email,recado,rg,profissao,rua,CEP,numero,bairro,cidade,estado,observacao);
                 const resposta = await modelo.Inserir(tipo)
                 if (resposta.resposta == "work") {
-                    autenticar = await auntenticacao.autenticar({ Email: email, Senha: senha, Conta: 'cliente', cpf: cpf })
+                    autenticar = await auntenticacao.autenticar({ Email: email, Senha: senha, Conta: 'cliente', cpf: cpf,nome:nome })
                 }
                 if (resposta.resposta.message) {
                     return resp.json({ msg: { message: resposta.resposta.message } })
-                } else if (resposta.resposta.code) {
-                    return resp.json({ msg: { message: resposta.resposta.code } })
+                } else if (resposta.resposta.code || resposta.status===400) {
+                    return resp.json({ msg: { message: resposta.status===400?resposta.resposta:resposta.resposta.code} })
                 } else {
                     return resp.json({ conta: "cliente", resp: resposta.resposta, token: autenticar })
                 }
             }
         }
-        return resp.json({ msg: { message: "falta dados" } })
+        return resp.json({ msg: { message: "falta dados" } }).status(400)
     }
 
     //função para atualizar 
@@ -105,9 +114,20 @@ export default class ClienteControle {
             const telefone = body.telefone;
             const senha = body.senha;
             const email = body.email;
+            const recado = body.recado;
+            const rg = body.rg;
+            const profissao = body.profissao;
+            const rua = body.rua;
+            const CEP = body.cep;
+            const numero = body.numero;
+            const bairro = body.bairro;
+            const cidade = body.cidade;
+            const estado = body.estado;
+            const observacao = body.observacao;
+
             if (cpf != undefined || cpf != "" || cpf != "undefined") {
                 const modelo = new ClienteMod(cpf);
-                const resposta = await modelo.Atualizar(nome, telefone, senha, email)
+                const resposta = await modelo.Atualizar(nome, telefone, senha, email,recado,rg,profissao,rua,CEP,numero,bairro,cidade,estado,observacao)
                 console.log(resposta)
                 return resp.json({ resp: resposta })
             }

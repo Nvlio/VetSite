@@ -26,7 +26,7 @@ export default class UnidadeDB {
             let conector="WHERE "
             if (nome!="_") {
                 sqlCode += `${conector}nome LIKE ? `
-                values.push(`${nome}%`)
+                values.push(`%${nome}%`)
                 conector="AND "
             } 
             if(cidade!="_") {

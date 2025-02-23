@@ -12,7 +12,7 @@ export default class ClienteDB {
             const listaFim = []
 
             for (let item of list) {
-                const modelo = new ClienteMod(item.cpf, item.nome, item.telefone, item.senha, item.email)
+                const modelo = new ClienteMod(item.CPF, item.Nome, item.Telefone, item.Senha, item.Email,item.Recado,item.RG,item.Profissao,item.Rua,item.CEP,item.Numero,item.Bairro,item.Cidade,item.Estado,item.Observacao)
                 listaFim.push(modelo.ToJSON())
             }
 
@@ -39,7 +39,7 @@ export default class ClienteDB {
             const listaFim = []
 
             for (let item of list) {
-                const modelo = new ClienteMod(item.cpf, item.nome, item.telefone, item.senha, item.email)
+                const modelo = new ClienteMod(item.CPF, item.Nome, item.Telefone, item.Senha, item.Email)
                 listaFim.push(modelo.ToJSON())
             }
 
@@ -60,7 +60,7 @@ export default class ClienteDB {
 
             if (list.length > 0) {
                 for (let item of list) {
-                    const modelo = new ClienteMod(item.cpf, item.nome, item.telefone, item.senha, item.email)
+                    const modelo = new ClienteMod(item.CPF, item.Nome, item.Telefone, item.Senha, item.Email)
                     listaFim.push(modelo.ToJSON())
                 }
 
@@ -100,49 +100,99 @@ export default class ClienteDB {
 
     }
 
-    async POST(cpf, nome, telefone, senha, email) {
+    async POST(cpf, nome, telefone, senha, email,recado,rg,profissao,rua,CEP,numero,bairro,cidade,observacao) {
         try {
-            const conexao = await Conectar();
             const Fail = await this.CheckEmailTel({ 'email': email, 'telefone': telefone })
             if (Fail) {
                 throw new Error("Email ou Telefone ja existem");
             }
-            const sqlCode = "INSERT INTO usuario (cpf, nome, telefone, senha, email) VALUES (?,?,?,?,?)"
-            const valores = [cpf, nome, telefone, senha, email]
+            const sqlCode = "INSERT INTO usuario (cpf, nome, telefone, senha, email,recado,rg,profissao,rua,CEP,numero,bairro,cidade,observacao) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            const valores = [cpf, nome, telefone, senha, email,recado,rg,profissao,rua,CEP,numero,bairro,cidade,observacao]
             await conexao.query(sqlCode, valores)
 
             return ({ "resp": 'work' })
         } catch (e) {
-            return ({ "resp": e })
+            return ({ "resp": e.message,"error":true })
         }
     }
 
-    async PUT(cpf, nome, telefone, senha, email) {
+    async PUT(cpf, nome, telefone, senha, email, recado, rg, profissao, rua, CEP, numero, bairro, cidade, estado, observacao) {
         try {
             const conexao = await Conectar();
             let sqlCode = "UPDATE usuario SET "
-            let conector=" "
+            let conector = " "
             let valores = []
 
-            if(nome!=""){
+            if (nome != "" && nome) {
                 sqlCode += "nome=?"
-                conector=", "
+                conector = ", "
                 valores.push(nome)
             }
 
-            if(telefone!=""){
-                sqlCode +=`${conector}telefone=?`
-                conector=", "
+            if (telefone != "" && telefone) {
+                sqlCode += `${conector}telefone=?`
+                conector = ", "
                 valores.push(telefone)
             }
 
-            if(senha!=""){
-                sqlCode +=`${conector}senha=?`
-                conector=", "
+            if (senha != "" && senha) {
+                sqlCode += `${conector}senha=?`
+                conector = ", "
                 valores.push(senha)
             }
 
-            if (email!=""){
+            if (recado != "" && recado) {
+                sqlCode += `${conector}recado=?`
+                conector = ", "
+                valores.push(recado)
+            }
+            if (rg != "" && rg) {
+                sqlCode += `${conector}rg=?`
+                conector = ", "
+                valores.push(rg)
+            }
+            if (profissao != "" && profissao) {
+                sqlCode += `${conector}profissao=?`
+                conector = ", "
+                valores.push(profissao)
+            }
+            if (rua != "" && rua) {
+                sqlCode += `${conector}rua=?`
+                conector = ", "
+                valores.push(rua)
+            }
+            if (CEP != "" && CEP) {
+                sqlCode += `${conector}CEP=?`
+                conector = ", "
+                valores.push(CEP)
+            }
+            if (numero != "" && numero) {
+                sqlCode += `${conector}numero=?`
+                conector = ", "
+                valores.push(numero)
+            }
+            if (bairro != "" && bairro) {
+                sqlCode += `${conector}bairro=?`
+                conector = ", "
+                valores.push(bairro)
+            }
+            if (cidade != "" && cidade) {
+                sqlCode += `${conector}cidade=?`
+                conector = ", "
+                valores.push(cidade)
+            }
+            if (estado != "" && estado) {
+                sqlCode += `${conector}estado=?`
+                conector = ", "
+                valores.push(estado)
+            }
+            if (observacao != "" && observacao) {
+                sqlCode += `${conector}observacao=?`
+                conector = ", "
+                valores.push(observacao)
+            }
+
+            if (email != "" && email) {
                 sqlCode += `${conector}email=? `
                 valores.push(email)
             }

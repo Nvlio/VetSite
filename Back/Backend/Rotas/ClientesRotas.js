@@ -9,7 +9,7 @@ const CtrCLi = new ClienteControle()
 ClienteRota
 .get('/',CtrCLi.GET)
 .post('/',CtrCLi.POST)
-.post('/:tipo',CtrCLi.LOGIN)
+.post('/Login',CtrCLi.LOGIN)
 .get('/:nome',CtrCLi.GETVal)
 .get('/:cpf/:tipo',CtrCLi.GETVal)
 .put('/:cpf',CtrCLi.PUT)

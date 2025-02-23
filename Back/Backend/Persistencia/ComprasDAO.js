@@ -26,13 +26,13 @@ export default class ComprasDB {
             const values = [];
             let conector = "WHERE "
             if (nome != "_") {
-                sqlCode += `${conector}usuario.Nome LIKE ? `
-                values.push(`${nome}%`)
+                sqlCode += `${conector}funcionario.Nome LIKE ? `
+                values.push(`%${nome}%`)
                 conector = "AND "
             }
             if (produto != "_") {
                 sqlCode += `${conector}produtos.nome LIKE ? `
-                values.push(`${produto}%`  )
+                values.push(`%${produto}%`  )
             }
             const [itens] = await conexao.query(sqlCode, values)
             let modelo = []
@@ -45,6 +45,7 @@ export default class ComprasDB {
             return ({ status: 200, content: modelo })
 
         } catch (e) {
+            console.log(e.message)
             return ({ status: 500, msg: e })
         }
     }

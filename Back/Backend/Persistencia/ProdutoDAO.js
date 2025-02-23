@@ -9,7 +9,7 @@ export default class ProdutoDB {
             const lista = []
 
             for (let item of itens) {
-                let modelo = new ProdutoMod(item.nome, item.valor, item.validade, item.quantidade, item.fornecedor, item.id)
+                let modelo = new ProdutoMod(item.nome, item.valor, item.validade, item.quantidade, item.fornecedor, item.id, item.descricao, item.categoria)
                 lista.push(modelo.ToJSON())
             }
 
@@ -19,25 +19,30 @@ export default class ProdutoDB {
         }
     }
 
-    async GETVAL(conexao, nome,fornecedor) {
+    async GETVAL(conexao, nome, fornecedor, id) {
         try {
             let sqlCode = "SELECT * FROM produtos "
-            let values =    []
-            let conector ="WHERE"
-            if (nome!="_"){
-                sqlCode+=`${conector} nome LIKE ?`
-                conector=" AND"
-                values.push(`${nome}%`)
+            let values = []
+            let conector = "WHERE"
+            if (nome != "_") {
+                sqlCode += `${conector} nome LIKE ?`
+                conector = " AND"
+                values.push(`%${nome}%`)
             }
-            if (fornecedor!="_"){
-                sqlCode+=`${conector} fornecedor LIKE ?`
-                values.push(`${fornecedor}%`)
+            if (id != "_") {
+                sqlCode += `${conector} id = ?`
+                conector = " AND"
+                values.push(id)
+            }
+            if (fornecedor != "_") {
+                sqlCode += `${conector} fornecedor LIKE ?`
+                values.push(`%${fornecedor}%`)
             }
             const [itens] = await conexao.query(sqlCode, values)
-            let modelo=[]
+            let modelo = []
 
             for (let item of itens) {
-                const prod = new ProdutoMod(item.nome, item.valor, item.validade, item.quantidade, item.fornecedor, item.id)
+                const prod = new ProdutoMod(item.nome, item.valor, item.validade, item.quantidade, item.fornecedor, item.id, item.descricao, item.categoria)
                 modelo.push(prod.ToJSON())
             }
 
@@ -48,10 +53,54 @@ export default class ProdutoDB {
         }
     }
 
-    async POST(conexao, nome, valor, validade, quantidade, fornecedor) {
+    async GETVALFilter(conexao, primeiro, segundo) {
         try {
-            const sqlCode = "INSERT INTO produtos VALUES (NULL,?,?,?,?,?)"
-            const values = [nome, valor, validade, quantidade, fornecedor]
+            let sqlCode = "SELECT * FROM produtos "
+            let values = []
+            let conector = "WHERE"
+            if (segundo != "_") {
+                sqlCode += `${conector} categoria = ?`
+                values.push(segundo)
+            }
+            if (primeiro != "_") {
+                sqlCode += ` ORDER BY valor ${primeiro === "maior" ? "DESC" : "ASC"}`
+            }
+            const [itens] = await conexao.query(sqlCode, values)
+            let modelo = []
+
+            for (let item of itens) {
+                const prod = new ProdutoMod(item.nome, item.valor, item.validade, item.quantidade, item.fornecedor, item.id, item.descricao, item.categoria)
+                modelo.push(prod.ToJSON())
+            }
+
+            return ({ status: 200, content: modelo })
+
+        } catch (e) {
+            return ({ status: 500, content: e })
+        }
+    }
+
+    async GETRec(conexao) {
+        try {
+            const sqlCode = "SELECT * FROM produtos ORDER BY id DESC"
+            const [itens] = await conexao.query(sqlCode)
+            const lista = []
+
+            for (let item of itens) {
+                let modelo = new ProdutoMod(item.nome, item.valor, item.validade, item.quantidade, item.fornecedor, item.id, item.descricao, item.categoria)
+                lista.push(modelo.ToJSON())
+            }
+
+            return ({ status: 200, content: lista })
+        } catch (e) {
+            return ({ status: 500, msg: e })
+        }
+    }
+
+    async POST(conexao, nome, valor, validade, quantidade, fornecedor, descricao,categoria) {
+        try {
+            const sqlCode = "INSERT INTO produtos VALUES (NULL,?,?,?,?,?,?,?)"
+            const values = [nome, valor, validade, quantidade, fornecedor, descricao,categoria]
             await conexao.query(sqlCode, values)
 
             return ({ status: 200, msg: "produto Inserido" })
@@ -61,7 +110,7 @@ export default class ProdutoDB {
         }
     }
 
-    async PUT(conexao, nome, valor, validade, quantidade, fornecedor, id) {
+    async PUT(conexao, nome, valor, validade, quantidade, fornecedor, id, descricao) {
         try {
             let sqlCode = "UPDATE produtos "
             let conector = "SET "
@@ -82,13 +131,18 @@ export default class ProdutoDB {
                 conector = ","
                 values.push(validade)
             }
-            if (quantidade != "") {
+            if (quantidade !== "") {
                 sqlCode += `${conector} quantidade=?`
                 conector = ","
                 values.push(quantidade)
             }
             if (fornecedor != "") {
                 sqlCode += `${conector} fornecedor=?`
+                conector = ","
+                values.push(fornecedor)
+            }
+            if (descricao != "") {
+                sqlCode += `${conector} descricao=?`
                 values.push(fornecedor)
             }
             sqlCode += " WHERE id=?"

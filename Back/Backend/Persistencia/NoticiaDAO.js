@@ -1,3 +1,4 @@
+import { query } from "express";
 import NoticiaModelo from "../Modelo/NoticiasModelo.js";
 import FuncionarioDB from "./FuncionariosDAO.js";
 
@@ -12,7 +13,7 @@ export default class NoticiaDB {
             for (let item of itens) {
                 const Funcionario = new FuncionarioDB()
                 const nome = await Funcionario.GETVALCPF(item.responsavelcpf)
-                const mod = new NoticiaModelo(item.titulo, item.subtitulo, item.artigo, item.imagem, item.responsavelcpf,item.id)
+                const mod = new NoticiaModelo(item.titulo, item.subtitulo, item.artigo, item.imagem, item.responsavelcpf, item.data, item.id, item.dataSaida)
                 lista.push(mod.ToJSON(nome))
             }
 
@@ -23,19 +24,26 @@ export default class NoticiaDB {
         }
     }
 
-    async GETTitle(conexao, title) {
+    async GETTitle(conexao, title, id,isLiked) {
         try {
-            const sqlcode = "SELECT * FROM noticia WHERE titulo LIKE ?"
-            const value = [`%${title}%`]
+            let sqlcode
+            let value
+            if (title) {
+                sqlcode = "SELECT * FROM noticia WHERE titulo LIKE ?"
+                value = [`%${title}%`]
+            } else {
+                sqlcode = "SELECT * FROM noticia WHERE ID = ?"
+                value = [id]
+            }
             const [itens] = await conexao.query(sqlcode, value)
-            
+
             const lista = []
 
             for (let item of itens) {
                 const Funcionario = new FuncionarioDB()
                 const nome = await Funcionario.GETVALCPF(item.responsavelcpf)
-                const mod = new NoticiaModelo(item.titulo, item.subtitulo, item.artigo, item.imagem, item.responsavelcpf,item.id)
-                lista.push(mod.ToJSON(nome))
+                const mod = new NoticiaModelo(item.titulo, item.subtitulo, item.artigo, item.imagem, item.responsavelcpf, item.data, item.id, item.dataSaida)
+                lista.push(mod.ToJSON(nome,isLiked))
             }
 
 
@@ -45,10 +53,26 @@ export default class NoticiaDB {
         }
     }
 
-    async POST(conexao, title, subtitle, article, img, cpf) {
+    async GETTOP(conexao, id) {
         try {
-            const sqlcode = "INSERT INTO noticia (titulo,subtitulo,artigo,imagem,responsavelcpf) VALUES(?,?,?,?,?)"
-            const value = [title, subtitle, article, img, cpf]
+            const sqlCode = "SELECT * FROM noticia ORDER BY curtidas DESC LIMIT 5;"
+            const value = [id]
+            const lista = await conexao.query(sqlCode, value)
+            const listaFinal = []
+            for (let item of lista[0]) {
+                const dado = new NoticiaModelo(item.titulo, item.subtitulo, item.artigo, item.imagem, item.responsavelcpf, item.data, item.id, item.dataSaida)
+                listaFinal.push(dado.ToJSON())
+            }
+            return listaFinal
+        } catch (e) {
+            return e
+        }
+    }
+
+    async POST(conexao, title, subtitle, article, img, cpf, data, dataE) {
+        try {
+            const sqlcode = "INSERT INTO noticia (titulo,subtitulo,artigo,imagem,responsavelcpf,data,dataSaida) VALUES(?,?,?,?,?,?,?)"
+            const value = [title, subtitle, article, img, cpf, data, dataE]
             await conexao.query(sqlcode, value)
 
             return "Objeto adicionado"
@@ -94,6 +118,50 @@ export default class NoticiaDB {
             return "Objeto atualizado"
         } catch (e) {
             return e
+        }
+    }
+
+    async CheckLIKE(conexao,id,userId){
+        try{
+            const sqlCode = "SELECT * FROM userCurtida WHERE noticiaID = ? AND userID = ?"
+            const values = [id,userId]
+            const [list] = await conexao.query(sqlCode,values)
+            console.log(list)
+            if(list.length>0){
+                return true
+            }else{
+                return false
+            }
+        }catch(e){
+            return false
+        }
+    }
+
+    async LIKE(conexao,id,userId){
+        try{
+            let sqlCode = "UPDATE noticia SET curtidas = curtidas + 1 WHERE id = ? "
+            const values = [id,userId]
+            await conexao.query(sqlCode,[values[0]])
+            sqlCode = "INSERT INTO userCurtida (id,noticiaID,userID) VALUES (null,?,?)"
+            await conexao.query(sqlCode,values)
+
+            return true
+        }catch(e){
+            return false
+        }
+    }
+
+    async DISLIKE(conexao,id,userId){
+        try{
+            let sqlCode = "UPDATE noticia SET curtidas = curtidas - 1 WHERE id = ? "
+            const values = [id,userId]
+            await conexao.query(sqlCode,[values[0]])
+            sqlCode = "DELETE FROM userCurtida WHERE noticiaID = ? AND userID = ?"
+            await conexao.query(sqlCode,values)
+
+            return true
+        }catch(e){
+            return false
         }
     }
 

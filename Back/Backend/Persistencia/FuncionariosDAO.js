@@ -7,12 +7,12 @@ export default class FuncionarioDB {
 
         try {
             const conexao = await Conectar();
-            const sqlCode = "SELECT funcionario.cpf, funcionario.nome, funcionario.telefone,funcionario.email,funcionario.especialidade,funcionario.funcao,unidade.nome AS unidade FROM `funcionario` INNER JOIN `unidade` ON funcionario.unidade=unidade.id"
+            const sqlCode = "SELECT funcionario.cpf, funcionario.nome, funcionario.telefone,funcionario.email,funcionario.especialidade,funcionario.funcao,funcionario.salario,funcionario.CEP,funcionario.endereco,funcionario.numero,funcionario.bairro,funcionario.cidade,funcionario.estado,unidade.nome AS unidade FROM `funcionario` INNER JOIN `unidade` ON funcionario.unidade=unidade.id"
             const [list] = await conexao.query(sqlCode)
             const listaFim = []
 
             for (let item of list) {
-                const modelo = new FuncionariMod(item.cpf, item.nome, item.telefone, item.senha, item.email, item.especialidade, item.funcao, item.unidade)
+                const modelo = new FuncionariMod(item.cpf, item.nome, item.telefone, item.senha, item.email, item.especialidade, item.funcao, item.unidade, item.salario, item.CEP, item.endereco, item.numero, item.bairro, item.cidade, item.estado)
                 listaFim.push(modelo.ToJSON())
             }
 
@@ -54,7 +54,7 @@ export default class FuncionarioDB {
             const listaFim = []
 
             for (let item of list) {
-                const modelo = new FuncionariMod(item.cpf, item.nome, item.telefone, item.senha, item.email, item.especialidade, item.funcao, item.unidade)
+                const modelo = new FuncionariMod(item.CPF, item.Nome, item.Telefone, item.Senha, item.Email, item.Especialidade, item.Funcao, item.Unidade, item.salario, item.CEP, item.endereco, item.numero, item.bairro, item.cidade, item.estado)
                 listaFim.push(modelo.ToJSON())
             }
 
@@ -67,15 +67,15 @@ export default class FuncionarioDB {
     async GETVALCPF(cpf) {
         try {
             const conexao = await Conectar();
-            let sqlCode = "SELECT * FROM `funcionario` WHERE cpf=?";
+            let sqlCode = "SELECT CPF,Nome,Telefone,Senha,Email,Especialidade,Funcao,Unidade,Salario,CEP,Endereco,Numero,Bairro,Cidade,Estado,nomeArquivo FROM `funcionario` JOIN fotoperfil ON CPF=idFuncionario WHERE cpf=?";
             let itens = [cpf]
             const [list] = await conexao.query(sqlCode, itens)
             //unidade não retorna numero
             const listaFim = []
 
             for (let item of list) {
-                const modelo = new FuncionariMod(item.cpf, item.nome, item.telefone, item.senha, item.email, item.especialidade, item.funcao, item.unidade)
-                listaFim.push(modelo.ToJSON())
+                const modelo = new FuncionariMod(item.CPF, item.Nome, item.Telefone, item.Senha, item.Email, item.Especialidade, item.Funcao, item.Unidade, item.Salario, item.CEP, item.Endereco, item.Numero, item.Bairro, item.Cidade, item.Estado)
+                listaFim.push(modelo.ToJSON(item.nomeArquivo))
             }
 
             return listaFim[0]
@@ -95,7 +95,7 @@ export default class FuncionarioDB {
 
             if (list.length > 0) {
                 for (let item of list) {
-                    const modelo = new FuncionariMod(item.cpf, item.nome, item.telefone, item.senha, item.email, item.especialidade, item.unidade, item.funcao)
+                    const modelo = new FuncionariMod(item.CPF, item.Nome, item.Telefone, item.Senha, item.Email, item.Especialidade, item.Funcao, item.Unidade)
                     listaFim.push(modelo.ToJSON())
                 }
 
@@ -135,15 +135,15 @@ export default class FuncionarioDB {
 
     }
 
-    async POST(cpf, nome, telefone, senha, email, especialidade, unidade, funcao) {
+    async POST(cpf, nome, telefone, senha, email, especialidade, unidade, funcao, salario, cep, endereco, numero, bairro, cidade, estado) {
         try {
             const conexao = await Conectar();
             const Fail = await this.CheckEmailTel({ 'email': email, 'telefone': telefone })
             if (Fail) {
                 throw new Error("Email ou Telefone ja existem");
             }
-            const sqlCode = "INSERT INTO funcionario (cpf, nome, telefone, senha, email,especialidade,unidade,funcao) VALUES (?,?,?,?,?,?,?,?)"
-            const valores = [cpf, nome, telefone, senha, email, especialidade, funcao, unidade]
+            const sqlCode = "INSERT INTO funcionario (cpf, nome, telefone, senha, email,especialidade,unidade,funcao,salario,CEP,endereco,numero,bairro,cidade,estado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            const valores = [cpf, nome, telefone, senha, email, especialidade, unidade, funcao, salario, cep, endereco, numero, bairro, cidade, estado]
             await conexao.query(sqlCode, valores)
 
             return ({ "resp": 'work' })
@@ -152,45 +152,73 @@ export default class FuncionarioDB {
         }
     }
 
-    async PUT(cpf, nome, telefone, senha, email, especialidade, funcao, unidade) {
+    async PUT(cpf, nome, telefone, senha, email, especialidade, funcao, unidade, salario, cep, endereco, numero, bairro, cidade, estado) {
         try {
             const conexao = await Conectar();
             let conector = ""
             let sqlCode = "UPDATE funcionario SET "
             let valores = []
-            if (nome != "") {
+            if (nome != "" && nome) {
                 sqlCode += "nome=?"
                 conector = ", "
                 valores.push(nome)
             }
-            if (telefone != "") {
+            if (telefone != "" && telefone) {
                 sqlCode += `${conector}telefone=?`
                 conector = ", "
                 valores.push(telefone)
             }
-            if (senha != "") {
+            if (senha != "" && senha) {
                 sqlCode += `${conector}senha=?`
                 conector = ", "
                 valores.push(senha)
             }
-            if (email != "") {
+            if (email != "" && email) {
                 sqlCode += `${conector}email=?`
                 conector = ", "
                 valores.push(email)
             }
-            if (especialidade != "") {
+            if (especialidade != "" && especialidade) {
                 sqlCode += `${conector}especialidade=?`
                 conector = ", "
                 valores.push(especialidade)
             }
-            if (funcao != "") {
+            if (funcao != "" && funcao) {
                 sqlCode += `${conector}funcao=?`
                 conector = ", "
                 valores.push(funcao)
             }
-            if (unidade != "") {
+            if (unidade != "" && unidade) {
                 sqlCode += `${conector}unidade=?`
                 valores.push(unidade)
+            }
+            if (salario != "" && salario) {
+                sqlCode += `${conector}salario=?`
+                valores.push(salario)
+            }
+            if (cep != "" && cep) {
+                sqlCode += `${conector}CEP=?`
+                valores.push(cep)
+            }
+            if (endereco != "" && endereco) {
+                sqlCode += `${conector}endereco=?`
+                valores.push(endereco)
+            }
+            if (numero != "" && numero) {
+                sqlCode += `${conector}numero=?`
+                valores.push(numero)
+            }
+            if (bairro != "" && bairro) {
+                sqlCode += `${conector}bairro=?`
+                valores.push(bairro)
+            }
+            if (cidade != "" && cidade) {
+                sqlCode += `${conector}cidade=?`
+                valores.push(cidade)
+            }
+            if (estado != "" && estado) {
+                sqlCode += `${conector}estado=?`
+                valores.push(estado)
             }
             sqlCode += " WHERE cpf = ?"
 
@@ -201,6 +229,30 @@ export default class FuncionarioDB {
             return ({ resp: 'work' })
         } catch (e) {
             return ({ resp: e })
+        }
+    }
+
+    async SaveImg(nome, cpf) {
+        try {
+            const conexao = await Conectar()
+            const sqlCode = "INSERT INTO fotoperfil (nomeArquivo,idFuncionario) VALUES (?,?)"
+            const values = [nome, cpf]
+            conexao.query(sqlCode, values)
+            return ({ "resp": 'work' })
+        } catch (e) {
+            return ({ "resp": e })
+        }
+    }
+
+    async UPDImg(nome, cpf) {
+        try {
+            const conexao = await Conectar()
+            const sqlCode = "UPDATE fotoperfil SET nomeArquivo=? WHERE idFuncionario=?"
+            const values = [nome, cpf]
+            conexao.query(sqlCode, values)
+            return ({ "resp": 'work' })
+        } catch (e) {
+            return ({ "resp": e })
         }
     }
 

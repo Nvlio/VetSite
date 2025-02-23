@@ -49,10 +49,10 @@ export default class RacaDB {
         }
     }
 
-    async POST(conexao, nome) {
+    async POST(conexao, nome,id_especie) {
         try {
-            const sqlCode = "INSERT INTO racas VALUES (NULL,?,?)"
-            const values = [nome]
+            const sqlCode = "INSERT INTO racas (nome,id_especie) VALUES (?,?)"
+            const values = [nome,id_especie]
             await conexao.query(sqlCode, values)
 
             return ({ status: 200, msg: "raca Inserido" })

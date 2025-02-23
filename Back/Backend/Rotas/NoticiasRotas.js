@@ -23,9 +23,11 @@ const upload = multer({ storage: armazenamento });
 
 NoticiaRota
 .get("/", Noticias.GET)
-.get("/:title", Noticias.GETVal)
+.get("/Limit/TOP/all",Noticias.GETTOP)
+.get("/:tipo/:valor/:cpf", Noticias.GETVal)
 .post("/", upload.single("noticia"), (req, res,next) => {Noticias.POST(req,res,next)})
 .put("/:id", Noticias.PUT)
+.put("/curtir/:id",Noticias.Curtir)
 .delete("/:id/:img", Noticias.DELETE)
 
 export default NoticiaRota;

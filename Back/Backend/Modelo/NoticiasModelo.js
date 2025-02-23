@@ -11,18 +11,23 @@ export default class NoticiaModelo {
     #cpfresp
     #id
     #caminho
+    #dataE
+    #data
+    #Curtido
 
-    constructor(title = "", subtitle = "", article = "", imagemNome = "", cpfresponsavel = "", id = "") {
+    constructor(title = "", subtitle = "", article = "", imagemNome = "", cpfresponsavel = "", data = "", id = "", dataE = "") {
         this.#title = title;
         this.#subtitle = subtitle;
         this.#article = article;
         this.#imagemnome = imagemNome;
         this.#cpfresp = cpfresponsavel
         this.#id = id
+        this.#data = data
+        this.#dataE = dataE
         this.#caminho = "C:\\Users\\jgabr\\Downloads\\trabalho\\backup\\Imagens\\posts"
     }
 
-    ToJSON(nome = "") {
+    ToJSON(nome = "",isLiked=false) {
         return ({
             title: this.#title,
             subtitle: this.#subtitle,
@@ -30,6 +35,9 @@ export default class NoticiaModelo {
             imagem: this.#imagemnome,
             cpfresp: this.#cpfresp,
             id: this.#id,
+            data: this.#data,
+            datE: this.#dataE,
+            curtido:isLiked,
             nome: nome
         })
     }
@@ -38,28 +46,35 @@ export default class NoticiaModelo {
         const DataBase = new NoticiaDB()
         const resp = await DataBase.GET(conexao)
         for (let img of resp) {
-            const filepath = path.join(this.#caminho, img.title + "." + img.imagem.split('.')[1])
+            const filepath = path.join(this.#caminho, img.imagem)
             const respImg = toBASE64(filepath)
             img["file"] = respImg;
         }
         return resp
     }
 
-    async coletarNome(conexao) {
+    async coletarNome(conexao,cpf) {
         const DataBase = new NoticiaDB()
-        const resp = await DataBase.GETTitle(conexao, this.#title)
+        const likedAlready = await DataBase.CheckLIKE(conexao,this.#id,cpf)
+        const resp = await DataBase.GETTitle(conexao, this.#title, this.#id,likedAlready)
         for (let img of resp) {
-            const filepath = path.join(this.#caminho, img.title + "." + img.imagem.split('.')[1])
+            const filepath = path.join(this.#caminho, img.imagem)
             const respImg = toBASE64(filepath)
             img["file"] = respImg;
         }
 
+        return resp
+    }
+
+    async coletarTOP(conexao) {
+        const DataBase = new NoticiaDB()
+        const resp = await DataBase.GETTOP(conexao, this.#id)
         return resp
     }
 
     async adiciona(conexao) {
         const DataBase = new NoticiaDB()
-        const resp = await DataBase.POST(conexao, this.#title, this.#subtitle, this.#article, this.#imagemnome, this.#cpfresp)
+        const resp = await DataBase.POST(conexao, this.#title, this.#subtitle, this.#article, this.#imagemnome, this.#cpfresp, this.#data, this.#dataE)
 
         return resp
     }
@@ -71,11 +86,24 @@ export default class NoticiaModelo {
         return resp
     }
 
+    async curtirNoticia(conexao,userID){
+        const Database = new NoticiaDB();
+        const likedAlready = await Database.CheckLIKE(conexao,this.#id,userID)
+        let resposta = false
+        console.log("ssss")
+        if(!likedAlready){
+            resposta = await Database.LIKE(conexao,this.#id,userID)
+        }else{
+            resposta = await Database.DISLIKE(conexao,this.#id,userID)
+        }
+        return resposta
+    }
+
     async deletar(conexao) {
         const DataBase = new NoticiaDB()
         const resp = await DataBase.DELETE(conexao, this.#id)
 
-        
+
     }
 
 }

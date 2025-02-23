@@ -48,7 +48,7 @@ export default class UnidadeControle {
             try {
                 const body = req.body;
                 const nome = body.nome;
-                const endereco = body.endereco;
+                const endereco = `${body.bairro}, ${body.rua} n:${body.numero}; ${body.estado} ${body.cidade} CEP:${body.cep}`;
                 const telefone = body.telefone;
 
                 const conexao = await Conectar()
